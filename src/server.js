@@ -1,11 +1,10 @@
 const app = require('./app');
-const sequelize = require('./config/database');
 const initializeDatabase = require('./config/database').initializeDatabase; // Import hàm khởi tạo
 
 const PORT = process.env.PORT || 3000;
 
-
 async function startServer() {
+    // Nhận đối tượng sequelize từ hàm initializeDatabase
     const sequelize = await initializeDatabase();
 
     // Kiểm tra kết nối cơ sở dữ liệu

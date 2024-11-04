@@ -1,7 +1,9 @@
-require('dotenv').config(); // Load các biến môi trường từ .env
+// src/config/database.js
+require('dotenv').config();
 const { Sequelize } = require('sequelize');
 const mysql = require('mysql2/promise');
 
+// Sử dụng biến môi trường từ .env
 const dbConfig = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -12,6 +14,7 @@ const dbConfig = {
 
 const databaseName = process.env.DB_NAME;
 
+// Khởi tạo đối tượng sequelize
 const sequelize = new Sequelize(databaseName, dbConfig.user, dbConfig.password, {
     host: dbConfig.host,
     dialect: dbConfig.dialect,
@@ -37,18 +40,16 @@ async function initializeDatabase() {
         await sequelize.authenticate();
         console.log(`Connection to the database "${databaseName}" has been established successfully.`);
 
-        // Đồng bộ tất cả các model
-        await sequelize.sync({ force: true });
+        // Đồng bộ các model
+        await sequelize.sync();
         console.log(`Database "${databaseName}" synchronized successfully.`);
 
+        return sequelize; // Trả về đối tượng sequelize sau khi khởi tạo thành công
     } catch (error) {
         console.error('Error setting up the database:', error);
-        throw error; // Ném lỗi để có thể xử lý ở nơi khác
+        throw error;
     }
 }
 
-// Xuất sequelize và hàm khởi tạo
-module.exports = {
-    initializeDatabase,
-    sequelize
-};
+// Export đối tượng sequelize và hàm initializeDatabase
+module.exports = { sequelize, initializeDatabase };
