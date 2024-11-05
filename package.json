@@ -7,6 +7,7 @@
     "dev": "nodemon src/server.js",
     "sync": "node src/config/sync.js",
     "seed": "node src/migration/runSeed.js",
+    "clear": "node src/migration/runClear.js",
     "drop": "node src/migration/runDrop.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

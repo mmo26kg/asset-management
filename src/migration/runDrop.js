@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Sequelize } = require('sequelize');
-const sequelize = require('../config/database'); // Đường dẫn tới file kết nối
+const { sequelize } = require('../config/database'); // Đường dẫn tới file kết nối
 
 const runSeed = async () => {
     try {

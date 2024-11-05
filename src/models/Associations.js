@@ -8,8 +8,7 @@ const User = require('./User');
 const Stock = require('./Stock');
 const Currency = require('./Currency');
 
-
-// Khai báo các quan hệ
+// Khai báo các quan hệ hiện tại
 User.hasMany(Transaction, { foreignKey: 'userId' });
 Transaction.belongsTo(User, { foreignKey: 'userId' });
 
@@ -33,6 +32,24 @@ AssetType.hasMany(Category, { foreignKey: 'assetTypeId' });
 
 Account.belongsTo(Category, { foreignKey: 'categoryId' });
 Account.belongsTo(Stock, { foreignKey: 'stockId' });
+
+// Bổ sung các quan hệ mới
+
+// Transaction và Account: Một giao dịch (transaction) sẽ thuộc về một tài khoản (account)
+Account.hasMany(Transaction, { foreignKey: 'accountId' });
+Transaction.belongsTo(Account, { foreignKey: 'accountId' });
+
+// UserBalance với Account: Một UserBalance có thể thuộc về một tài khoản
+UserBalance.belongsTo(Account, { foreignKey: 'accountId' });
+Account.hasMany(UserBalance, { foreignKey: 'accountId' });
+
+// UserBalance với Category: Một UserBalance có thể thuộc về một danh mục (category)
+UserBalance.belongsTo(Category, { foreignKey: 'categoryId' });
+Category.hasMany(UserBalance, { foreignKey: 'categoryId' });
+
+// UserBalance với AssetType: Một UserBalance có thể thuộc về một loại tài sản (asset type)
+UserBalance.belongsTo(AssetType, { foreignKey: 'assetTypeId' });
+AssetType.hasMany(UserBalance, { foreignKey: 'assetTypeId' });
 
 module.exports = {
     Transaction,
