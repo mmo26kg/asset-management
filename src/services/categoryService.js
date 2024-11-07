@@ -24,9 +24,20 @@ exports.updateCategory = async (id, data) => {
 };
 
 // Xóa một danh mục theo ID
-exports.deleteCategory = async (id) => {
+exports.deleteCategory = async (id, isHardDelete = false) => {
     const category = await Category.findByPk(id);
     if (!category) return null;
-    await category.destroy();
-    return true;
+
+    // Lưu dữ liệu của danh mục để trả về sau khi xóa
+    const deletedCategory = category.get({ plain: true });
+    
+    if (isHardDelete) {
+        // Hard delete: xóa hoàn toàn khỏi database
+        await category.destroy({ force: true });
+    } else {
+        // Soft delete: chỉ ẩn đi mà không xóa hoàn toàn
+        await category.destroy();
+    }
+
+    return deletedCategory; // Trả về đối tượng đã xóa
 };

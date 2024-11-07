@@ -9,19 +9,10 @@ async function runSeeds() {
     });
 
     const sqlCommands = [
-        `INSERT INTO `User` (`id`, `name`, `username`, `password`, `membership`, `isActive`, `createdAt`, `updatedAt`)
-VALUES 
-    ('11111111-1111-1111-1111-111111111111', 'Alice', 'alice123', 'password', 'Basic', true, NOW(), NOW()),
-    ('22222222-2222-2222-2222-222222222222', 'Bob', 'bob234', 'Premium', true, NOW(), NOW()),
-    ('33333333-3333-3333-3333-333333333333', 'Charlie', 'charlie345', 'Basic', true, NOW(), NOW()),
-    ('44444444-4444-4444-4444-444444444444', 'David', 'david456', 'Premium', true, NOW(), NOW()),
-    ('55555555-5555-5555-5555-555555555555', 'Eva', 'eva567', 'Basic', true, NOW(), NOW()),
-    ('66666666-6666-6666-6666-666666666666', 'Frank', 'frank678', 'Premium', true, NOW(), NOW()),
-    ('77777777-7777-7777-7777-777777777777', 'Grace', 'grace789', 'Basic', true, NOW(), NOW()),
-    ('88888888-8888-8888-8888-888888888888', 'Henry', 'henry890', 'Premium', true, NOW(), NOW()),
-    ('99999999-9999-9999-9999-999999999999', 'Ivy', 'ivy901', 'Basic', true, NOW(), NOW()),
-    ('00000000-0000-0000-0000-000000000000', 'Jack', 'jack012', 'Premium', true, NOW(), NOW());
-`,
+        `INSERT INTO \`User\` (\`id\`, \`name\`, \`username\`, \`password\`, \`membership\`, \`isActive\`, \`createdAt\`, \`updatedAt\`)
+        VALUES 
+            ('11111111-1111-1111-1111-111111111111', 'Alice', 'alice123', 'password123', 'premium', true, NOW(), NOW()),
+            ('22222222-2222-2222-2222-222222222222', 'Bob', 'bob456', 'password456', 'basic', true, NOW(), NOW());`,
 
         `INSERT INTO \`Currency\` (\`id\`, \`name\`, \`symbol\`, \`isActive\`, \`createdAt\`, \`updatedAt\`)
         VALUES 

@@ -40,3 +40,19 @@ exports.deleteCategory = (req, res) => {
         return deleted ? null : false; // null để trả về 204 nếu xóa thành công
     }, 204);
 };
+
+exports.deleteCategory = (req, res) => {
+    const isHardDelete = req.query.hardDelete === 'true';
+    handleServiceRequest(res, () => categoryService.deleteCategory(req.params.id, isHardDelete), 204);
+};
+
+exports.deleteCategory = (req, res) => {
+    const isHardDelete = req.query.hardDelete === 'true'; // Lấy tham số từ query
+    handleServiceRequest(res, async () => {
+        const deletedCategory = await categoryService.deleteCategory(req.params.id, isHardDelete);
+        if (!deletedCategory) {
+            return res.status(404).json({ error: 'Category not found' });
+        }
+        return deletedCategory;
+    });
+};
