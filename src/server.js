@@ -1,24 +1,21 @@
-const app = require('./app');
-const initializeDatabase = require('./config/database').initializeDatabase; // Import hàm khởi tạo
-
+const express = require('express');
+const { initializeDatabase } = require('./config/database'); // Sử dụng trực tiếp initializeDatabase và sequelize nếu cần
+const routes = require('./routes');
+const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
+app.use('/api', routes);
+
 async function startServer() {
-    // Nhận đối tượng sequelize từ hàm initializeDatabase
-    const sequelize = await initializeDatabase();
-
-    // Kiểm tra kết nối cơ sở dữ liệu
     try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
+        await initializeDatabase(); // Khởi tạo và đồng bộ database
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        console.error('Failed to start the server:', error);
     }
-
-    // Khởi động server
-    app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
-    });
 }
 
 startServer();
