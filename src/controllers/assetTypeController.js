@@ -15,7 +15,7 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các loại tài sản
 exports.getAllAssetTypes = (req, res) => {
-    handleServiceRequest(res, () => assetTypeService.getAllAssetTypes());
+    handleServiceRequest(res, () => assetTypeService.getAllAssetTypes(req.query));
 };
 
 // Controller lấy một loại tài sản theo ID

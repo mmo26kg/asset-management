@@ -15,7 +15,7 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các danh mục
 exports.getAllCategories = (req, res) => {
-    handleServiceRequest(res, () => categoryService.getAllCategories());
+    handleServiceRequest(res, () => categoryService.getAllCategories(req.query));
 };
 
 // Controller lấy một danh mục theo ID

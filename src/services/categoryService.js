@@ -1,8 +1,10 @@
 const { Category }  = require('../models');
 
 // Lấy tất cả các danh mục
-exports.getAllCategories = async () => {
-    return await Category.findAll();
+exports.getAllCategories = async (queryConditions) => {
+    return await Category.findAll({
+        where: queryConditions
+    });
 };
 
 // Lấy một danh mục theo ID

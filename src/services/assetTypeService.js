@@ -1,8 +1,10 @@
 const { AssetType } = require('../models');
 
 // Lấy tất cả các loại tài sản
-exports.getAllAssetTypes = async () => {
-    return await AssetType.findAll();
+exports.getAllAssetTypes = async (queryConditions) => {
+    return await AssetType.findAll({
+        where: queryConditions
+    });
 };
 
 // Lấy một loại tài sản theo ID

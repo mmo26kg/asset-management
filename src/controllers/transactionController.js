@@ -15,7 +15,7 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các giao dịch
 exports.getAllTransactions = (req, res) => {
-    handleServiceRequest(res, () => transactionService.getAllTransactions());
+    handleServiceRequest(res, () => transactionService.getAllTransactions(req.query));
 };
 
 // Controller lấy một giao dịch theo ID

@@ -1,8 +1,10 @@
 const { Stock } = require('../models');
 
 // Lấy tất cả các cổ phiếu
-exports.getAllStocks = async () => {
-    return await Stock.findAll();
+exports.getAllStocks = async (queryConditions) => {
+    return await Stock.findAll({
+        where: queryConditions
+    });
 };
 
 // Lấy một cổ phiếu theo ID

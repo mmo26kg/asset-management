@@ -1,8 +1,10 @@
 const { Transaction } = require('../models');
 
 // Lấy tất cả các giao dịch
-exports.getAllTransactions = async () => {
-    return await Transaction.findAll();
+exports.getAllTransactions = async (queryConditions) => {
+    return await Transaction.findAll({
+        where: queryConditions
+    });
 };
 
 // Lấy một giao dịch theo ID

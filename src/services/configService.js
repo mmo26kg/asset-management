@@ -1,8 +1,10 @@
 const { Config } = require('../models');
 
 // Lấy tất cả các cấu hình
-exports.getAllConfigs = async () => {
-    return await Config.findAll();
+exports.getAllConfigs = async (queryConditions) => {
+    return await Config.findAll({
+        where: queryConditions
+    });
 };
 
 // Lấy một cấu hình theo ID
