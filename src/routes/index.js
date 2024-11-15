@@ -19,6 +19,7 @@ router.use('/accounts', accountRoute); // Định nghĩa route cho Category
 router.use('/assetTypes', assetTypeRoute); // Định nghĩa route cho Category
 router.use('/currencies', currencyRoute); // Định nghĩa route cho Category
 router.use('/stocks', stockRoute); // Định nghĩa route cho Category
+router.use('/users', userRoute); // Định nghĩa route cho Category
 router.use('/userBalances', userBalanceRoute); // Định nghĩa route cho Category
 
 

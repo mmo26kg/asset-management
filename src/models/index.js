@@ -12,16 +12,7 @@ const User = require('./User');
 const Stock = require('./Stock');
 const Currency = require('./Currency');
 
-// // Khởi tạo models với sequelize
-// Transaction.init(sequelize);
-// Account.init(sequelize);
-// Config.init(sequelize);
-// UserBalance.init(sequelize);
-// Category.init(sequelize);
-// AssetType.init(sequelize);
-// User.init(sequelize);
-// Stock.init(sequelize);
-// Currency.init(sequelize);
+
 
 // Thiết lập các quan hệ giữa các mô hình
 const setupAssociations = () => {

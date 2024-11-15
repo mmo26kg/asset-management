@@ -9,4 +9,8 @@ router.post('/', userController.createUser);          // Tạo mới một ngư�
 router.put('/:id', userController.updateUser);        // Cập nhật một người dùng
 router.delete('/:id', userController.deleteUser);     // Xóa một người dùng
 
+
+router.post('/register', userController.registerUser);  // Đăng ký một người dùng
+router.post('/login', userController.loginUser);        // Đăng nhập vào một tài khoản người dùng
+
 module.exports = router;

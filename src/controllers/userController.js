@@ -40,3 +40,40 @@ exports.deleteUser = (req, res) => {
         return deleted ? null : false; // null để trả về 204 nếu xóa thành công
     }, 204);
 };
+
+exports.registerUser = async (req, res) => {
+    try {
+        const user = await userService.registerUser(req.body);
+        res.status(201).json({ message: 'Đăng ký thành công', user });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+/**
+ * API: Đăng nhập người dùng
+ * @param {Object} req - Tham số yêu cầu từ client
+ * @param {Object} res - Tham số phản hồi trả về cho client
+ */
+exports.loginUser = async (req, res) => {
+    try {
+        // Lấy thông tin đăng nhập từ body
+        const { username, password } = req.body;
+
+        // Gọi service để đăng nhập
+        const result = await userService.loginUser({ username, password });
+
+        // Trả về kết quả
+        res.json({
+            message: 'Đăng nhập thành công',
+            user: result.user,
+            token: result.token
+        });
+    } catch (error) {
+        // Trả về lỗi nếu có
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+};
