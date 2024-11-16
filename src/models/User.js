@@ -10,6 +10,11 @@ const User = sequelize.define('User', {
     username: { type: DataTypes.STRING, unique: true, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
     membership: { type: DataTypes.STRING, defaultValue: 'basic' },
+    role: {
+        type: DataTypes.ENUM('member', 'admin', 'system_admin'), // Danh sách vai trò
+        allowNull: false,
+        defaultValue: 'member', // Giá trị mặc định
+    },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 }, {
     timestamps: true,

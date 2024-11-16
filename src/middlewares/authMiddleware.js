@@ -14,7 +14,7 @@ const authenticateUser = async (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1]; // Lấy token sau "Bearer"
 
     if (!token) {
-        return res.status(401).json({ message: 'Token không có hoặc không hợp lệ' });
+        return res.status(401).json({ message: 'Token không có hoặc không hợp lệ. Vui lòng đăng nhập lại và thử lại' });
     }
 
     try {
@@ -27,7 +27,7 @@ const authenticateUser = async (req, res, next) => {
         // Tiếp tục đến bước tiếp theo (route handler)
         next();
     } catch (err) {
-        return res.status(403).json({ message: 'Token không hợp lệ hoặc đã hết hạn' });
+        return res.status(403).json({ message: 'Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại và thử lại' });
     }
 };
 

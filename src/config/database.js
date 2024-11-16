@@ -26,7 +26,7 @@ async function initializeDatabase() {
         // Kiểm tra và đồng bộ Sequelize với database
         await sequelize.authenticate();
         console.log('Database connection has been established successfully.');
-        await sequelize.sync();
+        await sequelize.sync({alter: true});
         console.log('Database synchronized successfully.');
     } catch (error) {
         console.error('Error setting up the database:', error);
