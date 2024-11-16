@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const configController = require('../controllers/configController');
+const authMiddleware = require('../middlewares/authMiddleware')
 
 // Định nghĩa các route cho các API
 router.get('/', configController.getAllConfigs);          // Lấy tất cả các cấu hình

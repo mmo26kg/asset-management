@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userBalanceController = require('../controllers/userBalanceController');
+const authMiddleware = require('../middlewares/authMiddleware')
 
 // Định nghĩa các route cho các API
 router.get('/', userBalanceController.getAllUserBalances);          // Lấy tất cả số dư người dùng

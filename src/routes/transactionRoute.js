@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
+const authMiddleware = require('../middlewares/authMiddleware')
+
 
 // Định nghĩa các route cho các API
 router.get('/', transactionController.getAllTransactions);          // Lấy tất cả các giao dịch
