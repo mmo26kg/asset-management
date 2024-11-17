@@ -6,7 +6,8 @@ const { Transaction } = require('../models');
 
 
 // Định nghĩa các route cho các API
-router.get('/', transactionController.getAllTransactions);          // Lấy tất cả các giao dịch
+router.get('/', authMiddleware.checkSystemAdmin, transactionController.getAllTransactions);          // Lấy tất cả các giao dịch
+router.get('/me', authMiddleware.checkLogin, transactionController.getAllMyTransactions);          // Lấy tất cả các giao dịch
 router.get('/:id', authMiddleware.checkOwner(Transaction), transactionController.getTransactionById);       // Lấy một giao dịch theo ID
 router.post('/', authMiddleware.checkLogin, transactionController.createTransaction);          // Tạo mới một giao dịch
 router.put('/:id', authMiddleware.checkOwner(Transaction), transactionController.updateTransaction);        // Cập nhật một giao dịch

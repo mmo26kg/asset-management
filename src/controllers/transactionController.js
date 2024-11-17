@@ -18,6 +18,13 @@ exports.getAllTransactions = (req, res) => {
     handleServiceRequest(res, () => transactionService.getAllTransactions(req.query));
 };
 
+
+// Controller lấy tất cả các giao dịch
+exports.getAllMyTransactions = (req, res) => {
+    handleServiceRequest(res, () => transactionService.getAllMyTransactions(req.query, req.user));
+};
+
+
 // Controller lấy một giao dịch theo ID
 exports.getTransactionById = (req, res) => {
     handleServiceRequest(res, () => transactionService.getTransactionById(req.params.id));

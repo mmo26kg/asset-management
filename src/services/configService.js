@@ -10,6 +10,7 @@ exports.getAllConfigs = async (queryConditions) => {
     });
 };
 
+
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
 exports.getAllMyConfigs = async (queryConditions, user) => {
     return await Config.findAll({
