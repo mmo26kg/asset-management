@@ -15,7 +15,7 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các tài khoản
 exports.getAllAccounts = (req, res) => {
-    handleServiceRequest(res, () => accountService.getAllAccounts(req.query));
+    handleServiceRequest(res, () => accountService.getAllAccounts(req.query, req.user));
 };
 
 // Controller lấy một tài khoản theo ID
@@ -34,19 +34,20 @@ exports.updateAccount = (req, res) => {
 };
 
 // // Controller xóa một tài khoản
-// exports.deleteAccount = (req, res) => {
+// exports.deleteAccount = async (req, res) => {
 //     handleServiceRequest(res, async () => {
 //         const deleted = await accountService.deleteAccount(req.params.id);
 //         return deleted ? null : false; // null để trả về 204 nếu xóa thành công
 //     }, 204);
 // };
+
 exports.deleteAccount = async (req, res) => {
     try {
         const deletedAccount = await accountService.deleteAccount(req.params.id);
         if (!deletedAccount) {
-            return res.status(404).json({ message: 'Account not found.' });
+            return res.status(404).json({ message: 'Không tìm thấy tài nguyên.' });
         }
-        return res.status(200).json({ message: 'Account deleted successfully.', deletedAccount });
+        return res.status(200).json({ message: 'Đã xóa thành công.'});
     } catch (error) {
         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }

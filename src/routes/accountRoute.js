@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const { Account } = require('../models');
 
 // Định nghĩa các route cho các API
-router.get('/', accountController.getAllAccounts);          // Lấy tất cả các tài khoản
+router.get('/', authMiddleware.checkLogin, accountController.getAllAccounts);          // Lấy tất cả các tài khoản
 router.get('/:id', authMiddleware.checkOwner(Account), accountController.getAccountById);       // Lấy một tài khoản theo ID
 router.post('/', authMiddleware.checkLogin, accountController.createAccount);          // Tạo mới một tài khoản
 router.put('/:id', authMiddleware.checkOwner(Account), accountController.updateAccount);        // Cập nhật một tài khoản

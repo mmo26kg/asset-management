@@ -75,7 +75,12 @@ exports.registerUser = async (data) => {
     // Kiểm tra xem tên người dùng đã tồn tại hay chưa
     const existingUser = await User.findOne({ where: { username: userData.username } });
     if (existingUser) {
-        throw new Error('Username already exists');
+        throw new Error('Tên người dùng đã tồn tại');
+    }
+
+    // const roleIsSystemAdmin = data.role === "system_admin";
+    if (data.role == 'system_admin'){
+        throw new Error('Bạn không được tạo tài khoản với vai trò system_admin');
     }
 
     // Mã hóa mật khẩu bằng hàm tiện ích
