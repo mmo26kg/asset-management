@@ -3,7 +3,16 @@ const { User } = require('../models');
 
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
-exports.getAllAccounts = async (queryConditions, user) => {
+exports.getAllAccounts = async (queryConditions) => {
+    return await Account.findAll({
+        where: {
+            ...queryConditions,
+        },
+    });
+};
+
+// Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
+exports.getAllMyAccounts = async (queryConditions, user) => {
     return await Account.findAll({
         where: {
             ...queryConditions,
@@ -11,7 +20,6 @@ exports.getAllAccounts = async (queryConditions, user) => {
         },
     });
 };
-
 
 // Lấy một tài khoản theo ID
 exports.getAccountById = async (id) => {

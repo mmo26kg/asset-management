@@ -1,9 +1,22 @@
 const { Config } = require('../models');
 
-// Lấy tất cả các cấu hình
+
+// Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
 exports.getAllConfigs = async (queryConditions) => {
     return await Config.findAll({
-        where: queryConditions
+        where: {
+            ...queryConditions,
+        },
+    });
+};
+
+// Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
+exports.getAllMyConfigs = async (queryConditions, user) => {
+    return await Config.findAll({
+        where: {
+            ...queryConditions,
+            userId: user.id,
+        },
     });
 };
 

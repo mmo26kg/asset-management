@@ -18,6 +18,11 @@ exports.getAllConfigs = (req, res) => {
     handleServiceRequest(res, () => configService.getAllConfigs(req.query));
 };
 
+// Controller lấy tất cả các cấu hình
+exports.getAllMyConfigs = (req, res) => {
+    handleServiceRequest(res, () => configService.getAllMyConfigs(req.query, req.user));
+};
+
 // Controller lấy một cấu hình theo ID
 exports.getConfigById = (req, res) => {
     handleServiceRequest(res, () => configService.getConfigById(req.params.id));
