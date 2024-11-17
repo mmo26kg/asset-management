@@ -38,4 +38,5 @@ exports.deleteAccount = async (id) => {
     if (!account) return null;
     await account.destroy();
     return true;
+    
 };

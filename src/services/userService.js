@@ -89,6 +89,7 @@ exports.registerUser = async (data) => {
         id: user.id,
         username: user.username,
         name: user.name,
+        role: user.role,
     };
 
     // Tạo token bằng hàm tiện ích
@@ -127,10 +128,13 @@ exports.loginUser = async (credentials) => {
     const payload = {
         id: user.id,
         username: user.username,
+        name: user.name,
+        role: user.role,
     };
 
     // Tạo token bằng hàm tiện ích
     const token = utils.generateToken(payload);
+    utils.checkTokenExpiration(token);
 
     // Loại bỏ mật khẩu khỏi kết quả trả về
     const userWithoutPassword = user.get({ plain: true });

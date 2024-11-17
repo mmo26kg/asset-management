@@ -33,10 +33,21 @@ exports.updateAccount = (req, res) => {
     handleServiceRequest(res, () => accountService.updateAccount(req.params.id, req.body));
 };
 
-// Controller xóa một tài khoản
-exports.deleteAccount = (req, res) => {
-    handleServiceRequest(res, async () => {
-        const deleted = await accountService.deleteAccount(req.params.id);
-        return deleted ? null : false; // null để trả về 204 nếu xóa thành công
-    }, 204);
+// // Controller xóa một tài khoản
+// exports.deleteAccount = (req, res) => {
+//     handleServiceRequest(res, async () => {
+//         const deleted = await accountService.deleteAccount(req.params.id);
+//         return deleted ? null : false; // null để trả về 204 nếu xóa thành công
+//     }, 204);
+// };
+exports.deleteAccount = async (req, res) => {
+    try {
+        const deletedAccount = await accountService.deleteAccount(req.params.id);
+        if (!deletedAccount) {
+            return res.status(404).json({ message: 'Account not found.' });
+        }
+        return res.status(200).json({ message: 'Account deleted successfully.', deletedAccount });
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    }
 };
