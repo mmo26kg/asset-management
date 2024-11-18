@@ -3,11 +3,19 @@ const { User } = require('../models');
 
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
-exports.getAllAccounts = async (queryConditions) => {
+exports.getAllAccounts = async (queryConditions, sortOptions) => {
+    // delete queryConditions.sortBy;
+    // delete queryConditions.sortOrder;
+    const sortBy = sortOptions.sortBy;
+    const sortOrder = sortOptions.sortOrder;
+
     return await Account.findAll({
         where: {
             ...queryConditions,
         },
+        order: [
+            [sortBy, sortOrder],
+        ]
     });
 };
 

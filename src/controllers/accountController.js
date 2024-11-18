@@ -15,7 +15,7 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các tài khoản
 exports.getAllAccounts = (req, res) => {
-    handleServiceRequest(res, () => accountService.getAllAccounts(req.query));
+    handleServiceRequest(res, () => accountService.getAllAccounts(req.query, req.sortOptions));
 };
 
 // Controller lấy tất cả các tài khoản
