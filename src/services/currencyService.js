@@ -1,9 +1,12 @@
 const { Currency } = require('../models');
 
 // Lấy tất cả các loại tiền tệ
-exports.getAllCurrencies = async (queryConditions) => {
+exports.getAllCurrencies = async (queryConditions, sortOptions) => {
     return await Currency.findAll({
-        where: queryConditions
+        where: queryConditions,
+        order: [
+            [sortOptions.sortBy, sortOptions.sortOrder],
+        ]
     });
 };
 

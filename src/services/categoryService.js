@@ -1,9 +1,14 @@
 const { Category }  = require('../models');
 
 // Lấy tất cả các danh mục
-exports.getAllCategories = async (queryConditions) => {
+exports.getAllCategories = async (queryConditions, sortOptions) => {
     return await Category.findAll({
-        where: queryConditions
+        where: {
+            ...queryConditions,
+        },
+        order: [
+            [sortOptions.sortBy, sortOptions.sortOrder],
+        ]
     });
 };
 

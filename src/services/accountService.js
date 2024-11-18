@@ -4,28 +4,27 @@ const { User } = require('../models');
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
 exports.getAllAccounts = async (queryConditions, sortOptions) => {
-    // delete queryConditions.sortBy;
-    // delete queryConditions.sortOrder;
-    const sortBy = sortOptions.sortBy;
-    const sortOrder = sortOptions.sortOrder;
 
     return await Account.findAll({
         where: {
             ...queryConditions,
         },
         order: [
-            [sortBy, sortOrder],
+            [sortOptions.sortBy, sortOptions.sortOrder],
         ]
     });
 };
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
-exports.getAllMyAccounts = async (queryConditions, user) => {
+exports.getAllMyAccounts = async (queryConditions, user, sortOptions) => {
     return await Account.findAll({
         where: {
             ...queryConditions,
             userId: user.id,
         },
+        order: [
+            [sortOptions.sortBy, sortOptions.sortOrder],
+        ]
     });
 };
 

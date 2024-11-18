@@ -2,20 +2,26 @@ const { Transaction } = require('../models');
 
 
 
-exports.getAllTransactions = async (queryConditions) => {
+exports.getAllTransactions = async (queryConditions, sortOptions) => {
     return await Transaction.findAll({
         where: {
             ...queryConditions,
         },
+        order: [
+            [sortOptions.sortBy, sortOptions.sortOrder],
+        ]
     });
 };
 
-exports.getAllMyTransactions = async (queryConditions, user) => {
+exports.getAllMyTransactions = async (queryConditions, user, sortOptions) => {
     return await Transaction.findAll({
         where: {
             ...queryConditions,
             userId: user.id,
         },
+        order: [
+            [sortOptions.sortBy, sortOptions.sortOrder],
+        ]
     });
 };
 

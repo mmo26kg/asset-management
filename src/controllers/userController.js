@@ -15,7 +15,7 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả người dùng
 exports.getAllUsers = (req, res) => {
-    handleServiceRequest(res, () => userService.getAllUsers(req.query));
+    handleServiceRequest(res, () => userService.getAllUsers(req.query, req.sortOptions));
 };
 
 // Controller lấy một người dùng theo ID

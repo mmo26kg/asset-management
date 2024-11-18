@@ -15,9 +15,12 @@ const utils = require('../utils/authenticateUtil');
  * Lấy tất cả người dùng dựa trên các điều kiện tìm kiếm
  * @param {Object} queryConditions - Các điều kiện tìm kiếm
  */
-exports.getAllUsers = async (queryConditions) => {
+exports.getAllUsers = async (queryConditions, sortOptions) => {
     return await User.findAll({
         where: queryConditions,
+        order: [
+            [sortOptions.sortBy, sortOptions.sortOrder],
+        ]
     });
 };
 

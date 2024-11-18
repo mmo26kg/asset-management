@@ -15,13 +15,13 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các giao dịch
 exports.getAllTransactions = (req, res) => {
-    handleServiceRequest(res, () => transactionService.getAllTransactions(req.query));
+    handleServiceRequest(res, () => transactionService.getAllTransactions(req.query, req.sortOptions));
 };
 
 
 // Controller lấy tất cả các giao dịch
 exports.getAllMyTransactions = (req, res) => {
-    handleServiceRequest(res, () => transactionService.getAllMyTransactions(req.query, req.user));
+    handleServiceRequest(res, () => transactionService.getAllMyTransactions(req.query, req.user, req.sortOptions));
 };
 
 

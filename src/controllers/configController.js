@@ -15,12 +15,12 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các cấu hình
 exports.getAllConfigs = (req, res) => {
-    handleServiceRequest(res, () => configService.getAllConfigs(req.query));
+    handleServiceRequest(res, () => configService.getAllConfigs(req.query, req.sortOptions));
 };
 
 // Controller lấy tất cả các cấu hình
 exports.getAllMyConfigs = (req, res) => {
-    handleServiceRequest(res, () => configService.getAllMyConfigs(req.query, req.user));
+    handleServiceRequest(res, () => configService.getAllMyConfigs(req.query, req.user, req.sortOptions));
 };
 
 // Controller lấy một cấu hình theo ID

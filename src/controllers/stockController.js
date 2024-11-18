@@ -15,7 +15,7 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các cổ phiếu
 exports.getAllStocks = (req, res) => {
-    handleServiceRequest(res, () => stockService.getAllStocks(req.query));
+    handleServiceRequest(res, () => stockService.getAllStocks(req.query, req.sortOptions));
 };
 
 // Controller lấy một cổ phiếu theo ID

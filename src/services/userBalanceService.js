@@ -1,9 +1,12 @@
 const { UserBalance } = require('../models');
 
 // Lấy tất cả UserBalance dựa trên các điều kiện tìm kiếm
-exports.getAllUserBalances = async (queryConditions) => {
+exports.getAllUserBalances = async (queryConditions, sortOptions) => {
     return await UserBalance.findAll({
-        where: queryConditions
+        where: queryConditions,
+        order: [
+            [sortOptions.sortBy, sortOptions.sortOrder],
+        ]
     });
 };
 

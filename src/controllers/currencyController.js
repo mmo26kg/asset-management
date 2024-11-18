@@ -15,7 +15,7 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả các loại tiền tệ
 exports.getAllCurrencies = (req, res) => {
-    handleServiceRequest(res, () => currencyService.getAllCurrencies(req.query));
+    handleServiceRequest(res, () => currencyService.getAllCurrencies(req.query, req.sortOptions));
 };
 
 // Controller lấy một loại tiền tệ theo ID
