@@ -2,17 +2,23 @@ const { Stock } = require('../models');
 
 // Lấy tất cả các cổ phiếu
 exports.getAllStocks = async (queryConditions, listOptions) => {
-    return await Stock.findAll({
+    const result = await Stock.findAndCountAll({
         where: {
             ...queryConditions,
             ...listOptions.whereCondition,
         },
-        order: [
-            [listOptions.sortBy, listOptions.sortOrder],
-        ],
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
     });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
 };
 
 // Lấy một cổ phiếu theo ID

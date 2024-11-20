@@ -2,17 +2,23 @@ const { Currency } = require('../models');
 
 // Lấy tất cả các loại tiền tệ
 exports.getAllCurrencies = async (queryConditions, listOptions) => {
-    return await Currency.findAll({
+    const result = await Currency.findAndCountAll({
         where: {
             ...queryConditions,
             ...listOptions.whereCondition,
         },
-        order: [
-            [listOptions.sortBy, listOptions.sortOrder],
-        ],
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
     });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
 };
 
 // Lấy một loại tiền tệ theo ID

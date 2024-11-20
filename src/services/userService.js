@@ -16,17 +16,23 @@ const utils = require('../utils/authenticateUtil');
  * @param {Object} queryConditions - Các điều kiện tìm kiếm
  */
 exports.getAllUsers = async (queryConditions, listOptions) => {
-    return await User.findAll({
+    const result = await User.findAndCountAll({
         where: {
             ...queryConditions,
             ...listOptions.whereCondition,
         },
-        order: [
-            [listOptions.sortBy, listOptions.sortOrder],
-        ],
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
     });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
 };
 
 /**

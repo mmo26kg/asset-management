@@ -2,17 +2,23 @@ const { AssetType } = require('../models');
 
 // Lấy tất cả các loại tài sản
 exports.getAllAssetTypes = async (queryConditions, listOptions) => {
-    return await AssetType.findAll({
+    const result = await AssetType.findAndCountAll({
         where: {
             ...queryConditions,
             ...listOptions.whereCondition,
         },
-        order: [
-            [listOptions.sortBy, listOptions.sortOrder],
-        ],
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
     });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
 };
 
 // Lấy một loại tài sản theo ID

@@ -3,30 +3,44 @@ const { Transaction } = require('../models');
 
 
 exports.getAllTransactions = async (queryConditions, listOptions) => {
-    return await Transaction.findAll({
+    const result = await Transaction.findAndCountAll({
         where: {
             ...queryConditions,
             ...listOptions.whereCondition,
         },
-        order: [
-            [listOptions.sortBy, listOptions.sortOrder],
-        ],
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
     });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
 };
 
 exports.getAllMyTransactions = async (queryConditions, user, listOptions) => {
-    return await Transaction.findAll({
+    const result = await Account.findAndCountAll({
         where: {
             ...queryConditions,
             userId: user.id,
             ...listOptions.whereCondition,
         },
-        order: [
-            [listOptions.sortBy, listOptions.sortOrder],
-        ]
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
+        limit: listOptions.perpage,
+        offset: listOptions.offset,
     });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
 };
 
 // Lấy một giao dịch theo ID
