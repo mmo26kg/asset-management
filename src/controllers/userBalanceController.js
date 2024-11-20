@@ -15,12 +15,12 @@ const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => 
 
 // Controller lấy tất cả số dư người dùng
 exports.getAllUserBalances = (req, res) => {
-    handleServiceRequest(res, () => userBalanceService.getAllUserBalances(req.query, req.sortOptions));
+    handleServiceRequest(res, () => userBalanceService.getAllUserBalances(req.query, req.listOptions));
 };
 
 // Controller lấy một số dư người dùng theo ID
 exports.getUserBalanceById = (req, res) => {
-    handleServiceRequest(res, () => userBalanceService.getUserBalanceById(req.params.id, req.sortOptions));
+    handleServiceRequest(res, () => userBalanceService.getUserBalanceById(req.params.id, req.listOptions));
 };
 
 // Controller tạo mới một số dư người dùng

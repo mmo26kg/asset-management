@@ -1,5 +1,7 @@
 // middleware/queryMiddleware.js
-const listOptionsMiddleware = (req, res, next) => {
+const { Op } = require('sequelize');
+
+module.exports = (req, res, next) => {
     const {
         sortBy = 'id', // Mặc định sort theo id
         sortOrder = 'ASC', // Mặc định sắp xếp tăng dần
@@ -9,6 +11,12 @@ const listOptionsMiddleware = (req, res, next) => {
         page = 1 // Mặc định là trang đầu tiên
     } = req.query;
 
+    const whereCondition = {};
+
+    if (searchBy && keyword) {
+        whereCondition[searchBy] = { [Op.like]: `%${keyword}%` };
+    }
+
     // Tính toán offset dựa trên perpage và page
     const offset = (page - 1) * perpage;
 
@@ -16,8 +24,7 @@ const listOptionsMiddleware = (req, res, next) => {
     req.listOptions = {
         sortBy,
         sortOrder: sortOrder.toUpperCase(), // Đảm bảo luôn là ASC hoặc DESC
-        searchBy,
-        keyword,
+        whereCondition,
         perpage: parseInt(perpage, 10),
         page: parseInt(page, 10),
         offset: parseInt(offset, 10),
@@ -34,4 +41,4 @@ const listOptionsMiddleware = (req, res, next) => {
     next();
 };
 
-module.exports = {listOptionsMiddleware};
+

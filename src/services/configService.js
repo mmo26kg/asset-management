@@ -2,27 +2,31 @@ const { Config } = require('../models');
 
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
-exports.getAllConfigs = async (queryConditions, sortOptions) => {
+exports.getAllConfigs = async (queryConditions, listOptions) => {
     return await Config.findAll({
         where: {
             ...queryConditions,
+            ...listOptions.whereCondition,
         },
         order: [
-            [sortOptions.sortBy, sortOptions.sortOrder],
-        ]
+            [listOptions.sortBy, listOptions.sortOrder],
+        ],
+        limit: listOptions.perpage,
+        offset: listOptions.offset,
     });
 };
 
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
-exports.getAllMyConfigs = async (queryConditions, user, sortOptions) => {
+exports.getAllMyConfigs = async (queryConditions, user, listOptions) => {
     return await Config.findAll({
         where: {
             ...queryConditions,
             userId: user.id,
+            ...listOptions.whereCondition,
         },
         order: [
-            [sortOptions.sortBy, sortOptions.sortOrder],
+            [listOptions.sortBy, listOptions.sortOrder],
         ]
         
     });

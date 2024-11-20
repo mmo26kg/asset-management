@@ -2,25 +2,29 @@ const { Transaction } = require('../models');
 
 
 
-exports.getAllTransactions = async (queryConditions, sortOptions) => {
+exports.getAllTransactions = async (queryConditions, listOptions) => {
     return await Transaction.findAll({
         where: {
             ...queryConditions,
+            ...listOptions.whereCondition,
         },
         order: [
-            [sortOptions.sortBy, sortOptions.sortOrder],
-        ]
+            [listOptions.sortBy, listOptions.sortOrder],
+        ],
+        limit: listOptions.perpage,
+        offset: listOptions.offset,
     });
 };
 
-exports.getAllMyTransactions = async (queryConditions, user, sortOptions) => {
+exports.getAllMyTransactions = async (queryConditions, user, listOptions) => {
     return await Transaction.findAll({
         where: {
             ...queryConditions,
             userId: user.id,
+            ...listOptions.whereCondition,
         },
         order: [
-            [sortOptions.sortBy, sortOptions.sortOrder],
+            [listOptions.sortBy, listOptions.sortOrder],
         ]
     });
 };

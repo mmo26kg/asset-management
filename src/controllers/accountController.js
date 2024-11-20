@@ -20,7 +20,7 @@ exports.getAllAccounts = (req, res) => {
 
 // Controller lấy tất cả các tài khoản
 exports.getAllMyAccounts = (req, res) => {
-    handleServiceRequest(res, () => accountService.getAllMyAccounts(req.query, req.user, req.sortOptions));
+    handleServiceRequest(res, () => accountService.getAllMyAccounts(req.query, req.user, req.listOptions));
 };
 
 // Controller lấy một tài khoản theo ID

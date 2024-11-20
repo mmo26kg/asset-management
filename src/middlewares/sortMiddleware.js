@@ -1,4 +1,4 @@
-// middlewares/sortMiddleware.js
+// middlewares/listOptionsMiddleware.js
 
 module.exports = (req, res, next) => {
     let { sortBy = 'id', sortOrder = 'ASC' } = req.query;
@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
         sortOrder = sortOrder && sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
 
         // Lưu thông tin sắp xếp vào req
-        req.sortOptions = {
+        req.listOptions = {
             sortBy,
             sortOrder,
         };
@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
         delete req.query.sortOrder;
     } else {
         // Không có sắp xếp, bỏ qua
-        req.sortOptions = null;
+        req.listOptions = null;
     }
 
     

@@ -3,11 +3,11 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { User } = require('../models');
-const sortMiddleware = require('../middlewares/sortMiddleware');
+const listOptionsMiddleware = require('../middlewares/listOptionsMiddleware');
 
 
 // Định nghĩa các route cho các API
-router.get('/', authMiddleware.checkSystemAdmin, sortMiddleware, userController.getAllUsers);          // Lấy tất cả người dùng
+router.get('/', authMiddleware.checkSystemAdmin, listOptionsMiddleware, userController.getAllUsers);          // Lấy tất cả người dùng
 router.get('/:id', authMiddleware.checkOwner(User), userController.getUserById);       // Lấy một người dùng theo ID
 router.post('/', authMiddleware.checkSystemAdmin, userController.createUser);          // Tạo mới một người dùng
 router.put('/:id', authMiddleware.checkOwner(User), userController.updateUser);        // Cập nhật một người dùng
