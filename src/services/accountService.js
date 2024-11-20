@@ -1,17 +1,28 @@
 const { Account } = require('../models');
 const { User } = require('../models');
+const { Op } = require('sequelize');
 
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
-exports.getAllAccounts = async (queryConditions, sortOptions) => {
+exports.getAllAccounts = async (queryConditions, listOptions) => {
+
+    const whereCondition = {};
+    const searchBy = listOptions.searchBy;
+    const keyword = listOptions.keyword;
+    if (searchBy && keyword) {
+        whereCondition[searchBy] = { [Op.like]: `%${keyword}%` };
+    }
 
     return await Account.findAll({
         where: {
             ...queryConditions,
+            ...whereCondition,
         },
         order: [
-            [sortOptions.sortBy, sortOptions.sortOrder],
-        ]
+            [listOptions.sortBy, listOptions.sortOrder],
+        ],
+        limit: listOptions.perpage,
+        offset: listOptions.offset,
     });
 };
 
