@@ -1,36 +1,49 @@
 const { Account } = require('../models');
 const { User } = require('../models');
 
-
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
 exports.getAllAccounts = async (queryConditions, listOptions) => {
-
-    return await Account.findAll({
+    const result = await Account.findAndCountAll({
         where: {
             ...queryConditions,
             ...listOptions.whereCondition,
         },
-        order: [
-            [listOptions.sortBy, listOptions.sortOrder],
-        ],
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
     });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
 };
 
-// Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
+// Hàm lấy danh sách tài khoản của một user
 exports.getAllMyAccounts = async (queryConditions, user, listOptions) => {
-    return await Account.findAll({
+    const result = await Account.findAndCountAll({
         where: {
             ...queryConditions,
-            userId: user.id,
+            userId: user.id, // Chỉ lấy tài khoản thuộc user hiện tại
             ...listOptions.whereCondition,
         },
-        order: [
-            [listOptions.sortBy, listOptions.sortOrder],
-        ]
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
+        limit: listOptions.perpage,
+        offset: listOptions.offset,
     });
+
+    return {
+        totalResults: result.count, // Tổng số kết quả
+        totalPages: Math.ceil(result.count / listOptions.perpage), // Tổng số trang
+        currentPage: listOptions.page, // Trang hiện tại
+        perPage: listOptions.perpage, // Số lượng trên mỗi trang
+        data: result.rows, // Danh sách kết quả
+    };
 };
+
 
 // Lấy một tài khoản theo ID
 exports.getAccountById = async (id) => {
