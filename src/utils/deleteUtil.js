@@ -1,10 +1,13 @@
 const models = require('../models'); // Import models
 
+// ==================== Định nghĩa ràng buộc xóa ====================
 
-// Lớp DeleteConstraint dùng để định nghĩa các ràng buộc khi xóa
+/**
+ * Lớp DeleteConstraint dùng để định nghĩa các ràng buộc xóa
+ */
 class DeleteConstraint {
     constructor(deletedModel, affectModel, foreignKey, onDelete) {
-        this.deletedModel = deletedModel; // Model cha
+        this.deletedModel = deletedModel; // Model chính (bị xóa)
         this.affectModel = affectModel;   // Model phụ thuộc
         this.foreignKey = foreignKey;     // Khóa ngoại
         this.onDelete = onDelete;         // Hành vi xóa ('Restrict', 'Cascade', 'SetNull')
@@ -30,25 +33,20 @@ exports.CategoryDeleteConstraint = [
     new DeleteConstraint(models.Category, models.AssetType, 'assetTypeId', 'SetNull'),
 ];
 
-
 // ==================== Kiểm tra ràng buộc xóa ====================
 
 /**
- * Kiểm tra xem có các ràng buộc 'Restrict' khi xóa hay không
- * @param {number} id - ID của đối tượng cần kiểm tra
- * @param {Array} deleteConstraints - Danh sách các ràng buộc xóa
- * @returns {Object} Kết quả kiểm tra
+ * Kiểm tra các ràng buộc xóa có hành vi 'Restrict'
+ * @param {number} id - ID đối tượng
+ * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
+ * @returns {Array} Kết quả ràng buộc 'Restrict'
  */
 exports.checkRestrict = async (id, deleteConstraints) => {
     const restrictConstraints = deleteConstraints.filter(constraint => constraint.onDelete === 'Restrict');
     const results = [];
-    
-    // Kiểm tra từng ràng buộc 'Restrict'
+
     for (const constraint of restrictConstraints) {
-        const count = await constraint.affectModel.count({
-            where: { [constraint.foreignKey]: id },
-        });
-        
+        const count = await constraint.affectModel.count({ where: { [constraint.foreignKey]: id } });
         if (count > 0) {
             results.push({ model: constraint.affectModel.name, count });
         }
@@ -57,65 +55,108 @@ exports.checkRestrict = async (id, deleteConstraints) => {
     return results;
 };
 
-// ==================== Xử lý xóa ====================
+/**
+ * Kiểm tra các ràng buộc xóa có hành vi 'Cascade'
+ * @param {number} id - ID đối tượng
+ * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
+ * @returns {Array} Kết quả ràng buộc 'Cascade'
+ */
+exports.checkCascade = async (id, deleteConstraints) => {
+    const cascadeConstraints = deleteConstraints.filter(constraint => constraint.onDelete === 'Cascade');
+    const results = [];
+
+    for (const constraint of cascadeConstraints) {
+        const count = await constraint.affectModel.count({ where: { [constraint.foreignKey]: id } });
+        if (count > 0) {
+            results.push({ model: constraint.affectModel.name, count });
+        }
+    }
+
+    return results;
+};
 
 /**
- * Xử lý logic xóa cho các controller
- * @param {Function} serviceMethod - Hàm xử lý xóa từ service
- * @param {Object} modelNames - Tên của model để thông báo lỗi
- * @param {Object} res - Đối tượng phản hồi (response)
+ * Kiểm tra các ràng buộc xóa có hành vi 'SetNull'
+ * @param {number} id - ID đối tượng
+ * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
+ * @returns {Array} Kết quả ràng buộc 'SetNull'
  */
-exports.handleDeleteService = async (serviceMethod, modelNames, res) => {
-    try {
-        const result = await serviceMethod();
+exports.checkSetNull = async (id, deleteConstraints) => {
+    const setNullConstraints = deleteConstraints.filter(constraint => constraint.onDelete === 'SetNull');
+    const results = [];
 
-        // Trường hợp không tìm thấy dữ liệu
-        if (!result) {
-            return res.status(404).json({
-                success: false,
-                message: `Không tìm thấy ${modelNames}.`,
-            });
+    for (const constraint of setNullConstraints) {
+        const count = await constraint.affectModel.count({ where: { [constraint.foreignKey]: id } });
+        if (count > 0) {
+            results.push({ model: constraint.affectModel.name, count });
         }
+    }
 
-        // Trường hợp có ràng buộc không thể xóa
-        if (result.success === false) {
-            return res.status(400).json({
-                success: false,
-                message: result.message,
-                details: result.details,
-                countModel: result.count,
-            });
-        }
+    return results;
+};
 
-        if (result.success === true) {
-            return res.status(400).json({
-                success: true,
-                message: result.message,
-                // details: result.details,
-                // countModel: result.count,
-            });
-        }
+// ==================== Thực hiện hành động xóa ====================
 
-    } catch (error) {
-        // Xử lý lỗi hệ thống
-        return res.status(500).json({
-            success: false,
-            message: `Đã xảy ra lỗi khi xóa ${modelNames}.`,
-            error: error.message,
+/**
+ * Xóa dữ liệu của model (cứng hoặc mềm tùy theo option)
+ * @param {Object} model - Model cần xóa
+ * @param {number} id - ID đối tượng
+ * @param {string} option - Kiểu xóa ('force' hoặc 'default')
+ */
+exports.executeDelete = async (model, id, option) => {
+    const force = option === 'force';
+    await model.destroy({ where: { id }, force });
+    console.log(`Đã xóa ${model.name} với ID ${id} (${force ? 'xóa cứng' : 'xóa mềm'}).`);
+};
+
+/**
+ * Thực hiện hành động xóa 'Cascade'
+ * @param {number} id - ID đối tượng
+ * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
+ * @param {string} option - Kiểu xóa ('force' hoặc 'default')
+ */
+exports.executeCascade = async (id, deleteConstraints, option) => {
+    const cascadeConstraints = deleteConstraints.filter(constraint => constraint.onDelete === 'Cascade');
+
+    for (const constraint of cascadeConstraints) {
+        await constraint.affectModel.destroy({
+            where: { [constraint.foreignKey]: id },
+            force: option === 'force',
         });
+        console.log(`Đã xóa cascade cho ${constraint.affectModel.name} liên quan đến ID ${id}.`);
     }
 };
 
 /**
- * Kiểm tra các ràng buộc và thực hiện xóa dữ liệu
- * @param {Object} model - Model cần xóa
- * @param {number} id - ID của đối tượng cần xóa
+ * Thực hiện cập nhật trường khóa ngoại thành null ('SetNull')
+ * @param {number} id - ID đối tượng
  * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
- * @param {string} option - Lựa chọn kiểu xóa ('force' hoặc 'default')
+ * @param {string} option - Kiểu xóa ('force' hoặc 'default')
+ */
+exports.executeSetNull = async (id, deleteConstraints, option) => {
+    const setNullConstraints = deleteConstraints.filter(constraint => constraint.onDelete === 'SetNull');
+
+    for (const constraint of setNullConstraints) {
+        await constraint.affectModel.update(
+            { [constraint.foreignKey]: null },
+            { where: { [constraint.foreignKey]: id } }
+        );
+        console.log(`Đã cập nhật khóa ngoại ${constraint.foreignKey} thành null cho ${constraint.affectModel.name}.`);
+    }
+};
+
+// ==================== Xử lý logic xóa ====================
+
+/**
+ * Kiểm tra ràng buộc xóa và thực hiện hành động xóa
+ * @param {Object} model - Model cần xóa
+ * @param {number} id - ID đối tượng
+ * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
+ * @param {string} option - Kiểu xóa ('force', 'default', hoặc 'check')
  * @returns {Object} Kết quả xử lý
  */
 exports.deleteService = async (model, id, deleteConstraints, option) => {
-    const validOptions = ['force', 'default']; // Các tùy chọn hợp lệ cho xóa
+    const validOptions = ['force', 'default', 'check'];
     if (!validOptions.includes(option)) {
         return {
             success: false,
@@ -123,17 +164,28 @@ exports.deleteService = async (model, id, deleteConstraints, option) => {
         };
     }
 
-    // Kiểm tra ràng buộc xóa 'Restrict'
+    if (option === 'check') {
+        const restrictArray = await this.checkRestrict(id, deleteConstraints);
+        const cascadeArray = await this.checkCascade(id, deleteConstraints);
+        const setNullArray = await this.checkSetNull(id, deleteConstraints);
+
+        return {
+            success: true,
+            type: 'check',
+            message: 'Kiểm tra ràng buộc thành công.',
+            details: { restrictArray, cascadeArray, setNullArray },
+        };
+    }
+
     const allowDeleteResult = await this.allowDelete(id, deleteConstraints);
     if (!allowDeleteResult.success) {
         return {
             success: false,
-            message: `Không thể xóa ${model.name} vì còn tồn tại các đối tượng phụ thuộc.`,
+            message: 'Không thể xóa vì có các ràng buộc chưa được xử lý.',
             details: allowDeleteResult.details,
         };
     }
 
-    // Tiến hành xóa theo các loại hành vi
     await this.executeCascade(id, deleteConstraints, option);
     await this.executeSetNull(id, deleteConstraints, option);
     await this.executeDelete(model, id, option);
@@ -144,61 +196,9 @@ exports.deleteService = async (model, id, deleteConstraints, option) => {
     };
 };
 
-// ==================== Thực hiện các hành động xóa ====================
-
 /**
- * Xóa dữ liệu của model (cứng hoặc mềm tùy theo option)
- * @param {Object} model - Model cần xóa
- * @param {number} id - ID của đối tượng cần xóa
- * @param {string} option - Kiểu xóa ('force' hoặc 'default')
- */
-exports.executeDelete = async (model, id, option) => {
-    const force = option === 'force'; // Nếu 'force', thực hiện xóa cứng
-    await model.destroy({ where: { id }, force });
-    console.log(`Đã xóa ${model.name} với ID ${id} (${force ? 'xóa cứng' : 'xóa mềm'}).`);
-};
-
-/**
- * Thực hiện xóa cascade cho các model có ràng buộc 'Cascade'
- * @param {number} id - ID của đối tượng cần xóa
- * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
- * @param {string} option - Kiểu xóa ('force' hoặc 'default')
- */
-exports.executeCascade = async (id, deleteConstraints, option) => {
-    const cascadeConstraints = deleteConstraints.filter(constraint => constraint.onDelete === 'Cascade');
-    
-    for (const constraint of cascadeConstraints) {
-        await constraint.affectModel.destroy({
-            where: { [constraint.foreignKey]: id },
-            force: option === 'force', // Xóa cứng nếu option là 'force'
-        });
-        console.log(`Đã xóa cascade cho ${constraint.affectModel.name} liên quan đến ID ${id}.`);
-    }
-};
-
-/**
- * Thực hiện cập nhật trường khóa ngoại thành null cho các model có ràng buộc 'SetNull'
- * @param {number} id - ID của đối tượng cần xóa
- * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
- * @param {string} option - Kiểu xóa ('force' hoặc 'default')
- */
-exports.executeSetNull = async (id, deleteConstraints, option) => {
-    const setNullConstraints = deleteConstraints.filter(constraint => constraint.onDelete === 'SetNull');
-    
-    for (const constraint of setNullConstraints) {
-        await constraint.affectModel.update(
-            { [constraint.foreignKey]: null },
-            { where: { [constraint.foreignKey]: id } }
-        );
-        console.log(`Đã cập nhật trường ${constraint.foreignKey} thành null cho ${constraint.affectModel.name} liên quan đến ID ${id}.`);
-    }
-};
-
-// ==================== Kiểm tra ràng buộc xóa ====================
-
-/**
- * Kiểm tra các ràng buộc xóa cho hành vi 'Restrict', 'Cascade', và 'SetNull'
- * @param {number} id - ID của đối tượng cần kiểm tra
+ * Kiểm tra các ràng buộc xóa và xác định khả năng xóa
+ * @param {number} id - ID đối tượng
  * @param {Array} deleteConstraints - Các ràng buộc xóa cần kiểm tra
  * @returns {Object} Kết quả kiểm tra
  */
@@ -207,4 +207,53 @@ exports.allowDelete = async (id, deleteConstraints) => {
     return restrictResults.length === 0
         ? { success: true }
         : { success: false, details: restrictResults };
+};
+
+// ==================== API handler cho controller ====================
+
+/**
+ * API handler để xử lý phản hồi khi xóa
+ * @param {Function} serviceMethod - Hàm xử lý xóa từ service
+ * @param {string} modelNames - Tên model để hiển thị thông báo
+ * @param {Object} res - Đối tượng phản hồi
+ */
+exports.handleDeleteService = async (serviceMethod, modelNames, res) => {
+    try {
+        const result = await serviceMethod();
+
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                message: `Không tìm thấy ${modelNames}.`,
+            });
+        }
+
+        if (!result.success) {
+            return res.status(400).json({
+                success: false,
+                message: result.message,
+                details: result.details,
+            });
+        }
+
+        if (result.success && result.type === 'check') {
+            return res.status(200).json({
+                success: true,
+                type: 'check',
+                message: result.message,
+                details: result.details,
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: result.message,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: `Đã xảy ra lỗi khi xử lý yêu cầu.`,
+            error: error.message,
+        });
+    }
 };
