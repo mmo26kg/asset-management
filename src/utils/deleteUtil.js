@@ -155,8 +155,16 @@ exports.executeSetNull = async (id, deleteConstraints, option) => {
  * @param {string} option - Kiểu xóa ('force', 'default', hoặc 'check')
  * @returns {Object} Kết quả xử lý
  */
-exports.deleteService = async (model, id, deleteConstraints, option) => {
-    const validOptions = ['force', 'default', 'check'];
+// Xuất hàm deleteService
+exports.deleteService = async (model, id, deleteConstraints, option, checkDetail) => {
+    
+    // -----------------------------------------------
+    // Kiểm tra các tùy chọn hợp lệ
+    // -----------------------------------------------
+    const validOptions = ['force', 'default', 'check', undefined];
+    const validCheckDetails = ['restrict', 'cascade', 'setnull', undefined];
+
+    // Kiểm tra tùy chọn xóa hợp lệ
     if (!validOptions.includes(option)) {
         return {
             success: false,
@@ -164,7 +172,19 @@ exports.deleteService = async (model, id, deleteConstraints, option) => {
         };
     }
 
-    if (option === 'check') {
+    // Kiểm tra checkDetail hợp lệ
+    if (!validCheckDetails.includes(checkDetail)) {
+        return {
+            success: false,
+            message: `Kiểm tra chi tiết không hợp lệ. Chỉ chấp nhận: ${validCheckDetails.join(', ')}.`,
+        };
+    }
+
+    // -----------------------------------------------
+    // Kiểm tra các ràng buộc nếu tùy chọn là 'check'
+    // -----------------------------------------------
+    if (option === 'check' && !checkDetail) {
+        // Kiểm tra các ràng buộc với các điều kiện mặc định (không có checkDetail)
         const restrictArray = await this.checkRestrict(id, deleteConstraints);
         const cascadeArray = await this.checkCascade(id, deleteConstraints);
         const setNullArray = await this.checkSetNull(id, deleteConstraints);
@@ -177,7 +197,48 @@ exports.deleteService = async (model, id, deleteConstraints, option) => {
         };
     }
 
+    if (option === 'check' && checkDetail) {
+        // Kiểm tra ràng buộc chi tiết khi có checkDetail
+        const results = [];
+        
+        // Lọc các ràng buộc theo checkDetail (chú ý so sánh không phân biệt hoa thường)
+        const restrictConstraints = deleteConstraints.filter(constraint =>
+            constraint.onDelete.toLowerCase() === checkDetail.toLowerCase()
+        );
+
+        // Duyệt qua từng ràng buộc và kiểm tra ảnh hưởng của chúng
+        for (const constraint of restrictConstraints) {
+            const details = await constraint.affectModel.findAndCountAll({
+                where: { [constraint.foreignKey]: id },
+                attributes: ['id'],
+            });
+            console.log('detail:', details);
+
+            // Nếu có bản ghi liên quan đến ràng buộc Restrict
+            if (details.count > 0) {
+                results.push({
+                    constraint: checkDetail,  // Loại ràng buộc (ví dụ: 'restrict')
+                    model: constraint.affectModel.name, // Tên model liên quan
+                    count: details.count, // Số lượng bản ghi bị ảnh hưởng
+                    rows: details.rows, // Các bản ghi bị ảnh hưởng
+                });
+            }
+        }
+
+        return {
+            success: true,
+            type: 'check',
+            message: 'Kiểm tra ràng buộc chi tiết thành công.',
+            details: results,
+        };
+    }
+
+    // -----------------------------------------------
+    // Kiểm tra có thể xóa được không nếu không phải là 'check'
+    // -----------------------------------------------
     const allowDeleteResult = await this.allowDelete(id, deleteConstraints);
+
+    // Nếu không cho phép xóa, trả về thông báo lỗi
     if (!allowDeleteResult.success) {
         return {
             success: false,
@@ -186,15 +247,25 @@ exports.deleteService = async (model, id, deleteConstraints, option) => {
         };
     }
 
+    // -----------------------------------------------
+    // Thực thi các thao tác xóa
+    // -----------------------------------------------
+    // Thực hiện cascade delete nếu cần thiết
     await this.executeCascade(id, deleteConstraints, option);
+    
+    // Thực hiện set null nếu cần thiết
     await this.executeSetNull(id, deleteConstraints, option);
+
+    // Thực hiện xóa model
     await this.executeDelete(model, id, option);
 
+    // Trả về thông báo thành công
     return {
         success: true,
         message: `${model.name} với ID ${id} đã được xóa thành công (${option}).`,
     };
 };
+
 
 /**
  * Kiểm tra các ràng buộc xóa và xác định khả năng xóa

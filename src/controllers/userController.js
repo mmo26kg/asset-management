@@ -41,7 +41,7 @@ exports.updateUser = (req, res) => {
 
 exports.deleteUser = (req, res) => {
     deleteUtil.handleDeleteService(
-        () => userService.deleteUser(req.params.id, req.params.option), // Truyền hàm service xử lý xóa
+        () => userService.deleteUser(req.params.id, req.params.option, req.params.checkDetail), // Truyền hàm service xử lý xóa
         'đối tượng', // Tên của model để thông báo lỗi
         res // Đối tượng response
     );

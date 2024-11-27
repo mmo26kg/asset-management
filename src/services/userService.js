@@ -70,9 +70,9 @@ exports.updateUser = async (id, data) => {
  * @param {number} id - ID người dùng
  */
 
-exports.deleteUser = async (id, option) => {
+exports.deleteUser = async (id, option, checkDetail) => {
     const constraints = deleteUtil.UserDeleteConstraint;
-    return await deleteUtil.deleteService(User, id, constraints, option);
+    return await deleteUtil.deleteService(User, id, constraints, option, checkDetail);
 };
 
 

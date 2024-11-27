@@ -11,7 +11,7 @@ router.get('/', authMiddleware.checkSystemAdmin, listOptionsMiddleware, userCont
 router.get('/:id', authMiddleware.checkOwner(User), userController.getUserById);       // Lấy một người dùng theo ID
 router.post('/', authMiddleware.checkSystemAdmin, userController.createUser);          // Tạo mới một người dùng
 router.put('/:id', authMiddleware.checkOwner(User), userController.updateUser);        // Cập nhật một người dùng
-router.delete('/:id/:option', authMiddleware.checkOwner(User), userController.deleteUser);     // Xóa một người dùng
+router.delete('/:id/:option?/:checkDetail?', authMiddleware.checkOwner(User), userController.deleteUser);     // Xóa một người dùng
 // Option nhận giá trị: force, default, check
 
 router.post('/register', userController.registerUser);  // Đăng ký một người dùng
