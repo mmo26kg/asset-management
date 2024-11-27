@@ -23,4 +23,26 @@ const User = sequelize.define('User', {
 
 });
 
+
+User.modelInfo = {
+    name: 'User',  // Tên của model
+    description: 'Đại diện cho người sử dụng hệ thống.',  // Mô tả model
+    vi: {
+        capitalize: 'Người Dùng',  // Tên dạng Capitalize cho tiếng Việt
+        upper: 'NGƯỜI DÙNG',  // Tên dạng Uppercase cho tiếng Việt
+        normalize: 'người dùng',  // Tên chuẩn hóa
+    },
+    en: {
+        capitalize: 'User',  // Tên dạng Capitalize cho tiếng Anh
+        upper: 'USER',  // Tên dạng Uppercase cho tiếng Anh
+        normalize: 'user',  // Tên chuẩn hóa
+    },
+    aliases: ['nguoidung', 'user'],  // Các tên gọi khác (ví dụ: viết tắt)
+    plural: 'Users',  // Dạng số nhiều
+    singular: 'User',  // Dạng số ít
+};
+
+
+
+
 module.exports = User;

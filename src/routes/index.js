@@ -1,4 +1,6 @@
 const express = require('express');
+const models = require('../models')
+
 const categoryRoute = require('./categoryRoute'); // Import route của Category
 const configRoute = require('./configRoute'); // Import route của Category
 const transactionRoute = require('./transactionRoute'); // Import route của Category

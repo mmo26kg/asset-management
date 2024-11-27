@@ -1,17 +1,21 @@
 const userService = require('../services/userService');
+const deleteUtil = require('../utils/deleteUtil')
 
-// Hàm để xử lý yêu cầu và gửi phản hồi
 const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => {
     try {
         const result = await serviceMethod();
-        if (result === null) {
-            return res.status(404).json({ error: 'Không tìm được người dùng' });
-        }
+
+        // Xử lý kết quả
+        if (result === null) return res.status(404).json({ success: false, message: 'Không tìm thấy dữ liệu.' });
+        if (result === true || result === undefined) return res.status(successStatus).send();
+        if (result.success === false) return res.status(400).json(result);
+
         return res.status(successStatus).json(result);
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ success: false, message: 'Đã xảy ra lỗi.', error: error.message });
     }
 };
+
 
 // Controller lấy tất cả người dùng
 exports.getAllUsers = (req, res) => {
@@ -33,13 +37,16 @@ exports.updateUser = (req, res) => {
     handleServiceRequest(res, () => userService.updateUser(req.params.id, req.body));
 };
 
-// Controller xóa một người dùng
+
+
 exports.deleteUser = (req, res) => {
-    handleServiceRequest(res, async () => {
-        const deleted = await userService.deleteUser(req.params.id);
-        return deleted ? null : false; // null để trả về 204 nếu xóa thành công
-    }, 204);
+    deleteUtil.handleDeleteService(
+        () => userService.deleteUser(req.params.id, req.params.option), // Truyền hàm service xử lý xóa
+        'đối tượng', // Tên của model để thông báo lỗi
+        res // Đối tượng response
+    );
 };
+
 
 exports.registerUser = async (req, res) => {
     try {
@@ -59,6 +66,7 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
     try {
         // Lấy thông tin đăng nhập từ body
+
         const { username, password } = req.body;
 
         // Gọi service để đăng nhập

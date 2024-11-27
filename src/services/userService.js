@@ -1,7 +1,7 @@
 // Import dependencies
 const { User } = require('../models');
-require('dotenv').config();
 const utils = require('../utils/authenticateUtil');
+const deleteUtil = require('../utils/deleteUtil');
 
 /**
  * Service: Quản lý người dùng (User Service)
@@ -16,6 +16,7 @@ const utils = require('../utils/authenticateUtil');
  * @param {Object} queryConditions - Các điều kiện tìm kiếm
  */
 exports.getAllUsers = async (queryConditions, listOptions) => {
+
     const result = await User.findAndCountAll({
         where: {
             ...queryConditions,
@@ -68,13 +69,13 @@ exports.updateUser = async (id, data) => {
  * Xóa một người dùng theo ID
  * @param {number} id - ID người dùng
  */
-exports.deleteUser = async (id) => {
-    const user = await User.findByPk(id);
-    if (!user) return null;
 
-    await user.destroy();
-    return true;
+exports.deleteUser = async (id, option) => {
+    const constraints = deleteUtil.UserDeleteConstraint;
+    return await deleteUtil.deleteService(User, id, constraints, option);
 };
+
+
 
 // ============================
 // *** Authentication Operations ***

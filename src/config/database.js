@@ -7,7 +7,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT,
     port: process.env.DB_PORT,
-    logging: true,
+    logging: false,
 });
 
 async function initializeDatabase() {
@@ -27,7 +27,10 @@ async function initializeDatabase() {
         // Kiểm tra và đồng bộ Sequelize với database
         await sequelize.authenticate();
         console.log('Database connection has been established successfully.');
-        await sequelize.sync({alter: true});
+
+        const models = require('../models'); // Import file index.js của models
+
+        await models.sequelize.sync({alter: true});
         console.log('Database synchronized successfully.');
     } catch (error) {
         console.error('Error setting up the database:', error);

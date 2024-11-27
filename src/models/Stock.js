@@ -16,6 +16,6 @@ const Stock = sequelize.define('Stock', {
     paranoid: true,
     freezeTableName: true
 
-});
+}); 
 
 module.exports = Stock;

@@ -1,4 +1,5 @@
 const accountService = require('../services/accountService');
+const deleteUtil = require('../utils/deleteUtil')
 
 // Hàm để xử lý yêu cầu và gửi phản hồi
 const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => {
@@ -38,22 +39,12 @@ exports.updateAccount = (req, res) => {
     handleServiceRequest(res, () => accountService.updateAccount(req.params.id, req.body));
 };
 
-// // Controller xóa một tài khoản
-// exports.deleteAccount = async (req, res) => {
-//     handleServiceRequest(res, async () => {
-//         const deleted = await accountService.deleteAccount(req.params.id);
-//         return deleted ? null : false; // null để trả về 204 nếu xóa thành công
-//     }, 204);
-// };
+
 
 exports.deleteAccount = async (req, res) => {
-    try {
-        const deletedAccount = await accountService.deleteAccount(req.params.id);
-        if (!deletedAccount) {
-            return res.status(404).json({ message: 'Không tìm thấy tài nguyên.' });
-        }
-        return res.status(200).json({ message: 'Đã xóa thành công.'});
-    } catch (error) {
-        return res.status(500).json({ message: 'Internal Server Error', error: error.message });
-    }
+    deleteUtil.handleDeleteService(
+        () => accountService.deleteUser(req.params.id), // Truyền hàm service xử lý xóa
+        'đối tượng', // Tên của model để thông báo lỗi
+        res // Đối tượng response
+    );
 };

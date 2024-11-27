@@ -1,5 +1,7 @@
 const { Account } = require('../models');
-const { User } = require('../models');
+const deleteUtil = require('../utils/deleteUtil');
+
+// const { User } = require('../models');
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
 exports.getAllAccounts = async (queryConditions, listOptions) => {
