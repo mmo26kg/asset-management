@@ -43,7 +43,7 @@ exports.updateAccount = (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
     deleteUtil.handleDeleteService(
-        () => accountService.deleteUser(req.params.id), // Truyền hàm service xử lý xóa
+        () => accountService.deleteAccount(req.params.id, req.params.option, req.params.checkDetail), // Truyền hàm service xử lý xóa
         'đối tượng', // Tên của model để thông báo lỗi
         res // Đối tượng response
     );

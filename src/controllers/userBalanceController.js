@@ -1,4 +1,6 @@
 const userBalanceService = require('../services/userBalanceService');
+const deleteUtil = require('../utils/deleteUtil')
+
 
 // Hàm để xử lý yêu cầu và gửi phản hồi
 const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => {
@@ -35,8 +37,9 @@ exports.updateUserBalance = (req, res) => {
 
 // Controller xóa một số dư người dùng
 exports.deleteUserBalance = (req, res) => {
-    handleServiceRequest(res, async () => {
-        const deleted = await userBalanceService.deleteUserBalance(req.params.id);
-        return deleted ? null : false; // null để trả về 204 nếu xóa thành công
-    }, 204);
+    deleteUtil.handleDeleteService(
+        () => userBalanceService.deleteUserBalance(req.params.id, req.params.option, req.params.checkDetail), // Truyền hàm service xử lý xóa
+        'đối tượng', // Tên của model để thông báo lỗi
+        res // Đối tượng response
+    );
 };

@@ -1,4 +1,6 @@
 const { AssetType } = require('../models');
+const deleteUtil = require('../utils/deleteUtil');
+
 
 // Lấy tất cả các loại tài sản
 exports.getAllAssetTypes = async (queryConditions, listOptions) => {
@@ -40,9 +42,7 @@ exports.updateAssetType = async (id, data) => {
 };
 
 // Xóa một loại tài sản theo ID
-exports.deleteAssetType = async (id) => {
-    const assetType = await AssetType.findByPk(id);
-    if (!assetType) return null;
-    await assetType.destroy();
-    return true;
+exports.deleteAssetType = async (id, option, checkDetail) => {
+    const constraints = deleteUtil.AccountDeleteConstraint;
+    return await deleteUtil.deleteService(AssetType, id, constraints, option, checkDetail);
 };

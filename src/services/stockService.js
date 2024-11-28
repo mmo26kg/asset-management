@@ -1,4 +1,6 @@
 const { Stock } = require('../models');
+const deleteUtil = require('../utils/deleteUtil');
+
 
 // Lấy tất cả các cổ phiếu
 exports.getAllStocks = async (queryConditions, listOptions) => {
@@ -40,9 +42,7 @@ exports.updateStock = async (id, data) => {
 };
 
 // Xóa một cổ phiếu theo ID
-exports.deleteStock = async (id) => {
-    const stock = await Stock.findByPk(id);
-    if (!stock) return null;
-    await stock.destroy();
-    return true;
+exports.deleteStock = async (id, option, checkDetail) => {
+    const constraints = deleteUtil.StockDeleteConstraint;
+    return await deleteUtil.deleteService(Stock, id, constraints, option, checkDetail);
 };

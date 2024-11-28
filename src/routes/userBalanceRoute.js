@@ -10,6 +10,6 @@ router.get('/', authMiddleware.checkSystemAdmin, listOptionsMiddleware, userBala
 router.get('/:id', authMiddleware.checkOwner(UserBalance), userBalanceController.getUserBalanceById);       // Lấy một số dư người dùng theo ID
 router.post('/', userBalanceController.createUserBalance);          // Tạo mới một số dư người dùng
 router.put('/:id', authMiddleware.checkOwner(UserBalance), userBalanceController.updateUserBalance);        // Cập nhật một số dư người dùng
-router.delete('/:id', authMiddleware.checkSystemAdmin, userBalanceController.deleteUserBalance);     // Xóa một số dư người dùng
+router.delete('/:id/:option?/:checkDetail?', authMiddleware.checkSystemAdmin, userBalanceController.deleteUserBalance);     // Xóa một số dư người dùng
 
 module.exports = router;

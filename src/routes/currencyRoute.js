@@ -9,6 +9,6 @@ router.get('/', authMiddleware.checkLogin, listOptionsMiddleware, currencyContro
 router.get('/:id', authMiddleware.checkLogin, currencyController.getCurrencyById);        // Lấy một loại tiền tệ theo ID
 router.post('/', authMiddleware.checkSystemAdmin, currencyController.createCurrency);           // Tạo mới một loại tiền tệ
 router.put('/:id', authMiddleware.checkSystemAdmin, currencyController.updateCurrency);         // Cập nhật một loại tiền tệ
-router.delete('/:id', authMiddleware.checkSystemAdmin, currencyController.deleteCurrency);      // Xóa một loại tiền tệ
+router.delete('/:id/:option?/:checkDetail?', authMiddleware.checkSystemAdmin, currencyController.deleteCurrency);      // Xóa một loại tiền tệ
 
 module.exports = router;

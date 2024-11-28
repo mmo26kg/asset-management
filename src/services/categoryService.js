@@ -1,4 +1,6 @@
 const { Category }  = require('../models');
+const deleteUtil = require('../utils/deleteUtil');
+
 
 // Lấy tất cả các danh mục
 exports.getAllCategories = async (queryConditions, listOptions) => {
@@ -40,9 +42,7 @@ exports.updateCategory = async (id, data) => {
 };
 
 // Xóa một danh mục theo ID
-exports.deleteCategory = async (id) => {
-    const category = await Category.findByPk(id);
-    if (!category) return null;
-    await category.destroy();
-    return true;
+exports.deleteCategory = async (id, option, checkDetail) => {
+    const constraints = deleteUtil.CategoryDeleteConstraint;
+    return await deleteUtil.deleteService(Category, id, constraints, option, checkDetail);
 };

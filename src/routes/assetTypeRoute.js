@@ -10,6 +10,6 @@ router.get('/', authMiddleware.checkLogin, listOptionsMiddleware, assetTypeContr
 router.get('/:id', authMiddleware.checkLogin, assetTypeController.getAssetTypeById);       // Lấy một loại tài sản theo ID
 router.post('/',authMiddleware.checkSystemAdmin, assetTypeController.createAssetType);          // Tạo mới một loại tài sản
 router.put('/:id',authMiddleware.checkSystemAdmin, assetTypeController.updateAssetType);        // Cập nhật một loại tài sản
-router.delete('/:id', authMiddleware.checkSystemAdmin, assetTypeController.deleteAssetType);     // Xóa một loại tài sản
+router.delete('/:id/:option?/:checkDetail?', authMiddleware.checkSystemAdmin, assetTypeController.deleteAssetType);     // Xóa một loại tài sản
 
 module.exports = router;

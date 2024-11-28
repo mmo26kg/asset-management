@@ -12,6 +12,6 @@ router.get('/me', authMiddleware.checkLogin, listOptionsMiddleware, configContro
 router.get('/:id', authMiddleware.checkOwner(models.Config), configController.getConfigById);       // Lấy một cấu hình theo ID
 router.post('/', authMiddleware.checkLogin, configController.createConfig);          // Tạo mới một cấu hình
 router.put('/:id', authMiddleware.checkOwner(models.Config), configController.updateConfig);        // Cập nhật một cấu hình
-router.delete('/:id', authMiddleware.checkOwner(models.Config), configController.deleteConfig);     // Xóa một cấu hình
+router.delete('/:id/:option?/:checkDetail?', authMiddleware.checkOwner(models.Config), configController.deleteConfig);     // Xóa một cấu hình
 
 module.exports = router;

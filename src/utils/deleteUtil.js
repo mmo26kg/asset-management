@@ -33,6 +33,25 @@ exports.CategoryDeleteConstraint = [
     new DeleteConstraint(models.Category, models.AssetType, 'assetTypeId', 'SetNull'),
 ];
 
+exports.AssetTypeDeleteConstraint = [
+    
+];
+exports.ConfigDeleteConstraint = [
+    
+];
+exports.CurrencyDeleteConstraint = [
+    
+];
+exports.StockDeleteConstraint = [
+    
+];
+exports.TransactionDeleteConstraint = [
+    
+];
+exports.UserBalanceDeleteConstraint = [
+    
+];
+
 // ==================== Kiểm tra ràng buộc xóa ====================
 
 /**
@@ -214,7 +233,7 @@ exports.deleteService = async (model, id, deleteConstraints, option, checkDetail
             });
             console.log('detail:', details);
 
-            // Nếu có bản ghi liên quan đến ràng buộc Restrict
+            // Nếu có bản ghi liên quan đến ràng buộc 
             if (details.count > 0) {
                 results.push({
                     constraint: checkDetail,  // Loại ràng buộc (ví dụ: 'restrict')

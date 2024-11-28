@@ -65,11 +65,8 @@ exports.updateAccount = async (id, data) => {
     return account;
 };
 
-// Xóa một tài khoản theo ID
-exports.deleteAccount = async (id) => {
-    const account = await Account.findByPk(id);
-    if (!account) return null;
-    await account.destroy();
-    return true;
-    
+
+exports.deleteAccount = async (id, option, checkDetail) => {
+    const constraints = deleteUtil.AccountDeleteConstraint;
+    return await deleteUtil.deleteService(Account, id, constraints, option, checkDetail);
 };

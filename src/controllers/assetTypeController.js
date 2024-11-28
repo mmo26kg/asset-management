@@ -1,4 +1,6 @@
 const assetTypeService = require('../services/assetTypeService');
+const deleteUtil = require('../utils/deleteUtil')
+
 
 // Hàm để xử lý yêu cầu và gửi phản hồi
 const handleServiceRequest = async (res, serviceMethod, successStatus = 200) => {
@@ -39,4 +41,10 @@ exports.deleteAssetType = (req, res) => {
         const deleted = await assetTypeService.deleteAssetType(req.params.id);
         return deleted ? null : false; // null để trả về 204 nếu xóa thành công
     }, 204);
+
+    deleteUtil.handleDeleteService(
+        () => assetTypeService.deleteAssetType(req.params.id, req.params.option, req.params.checkDetail), // Truyền hàm service xử lý xóa
+        'đối tượng', // Tên của model để thông báo lỗi
+        res // Đối tượng response
+    );
 };

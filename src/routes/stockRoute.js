@@ -11,6 +11,6 @@ router.get('/', authMiddleware.checkLogin, listOptionsMiddleware, stockControlle
 router.get('/:id', authMiddleware.checkLogin, stockController.getStockById);       // Lấy một cổ phiếu theo ID
 router.post('/', authMiddleware.checkSystemAdmin, stockController.createStock);          // Tạo mới một cổ phiếu
 router.put('/:id', authMiddleware.checkSystemAdmin, stockController.updateStock);        // Cập nhật một cổ phiếu
-router.delete('/:id', authMiddleware.checkSystemAdmin, stockController.deleteStock);     // Xóa một cổ phiếu
+router.delete('/:id/:option?/:checkDetail?', authMiddleware.checkSystemAdmin, stockController.deleteStock);     // Xóa một cổ phiếu
 
 module.exports = router;

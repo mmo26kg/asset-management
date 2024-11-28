@@ -30,7 +30,7 @@ async function initializeDatabase() {
 
         const models = require('../models'); // Import file index.js của models
 
-        await models.sequelize.sync({alter: true});
+        await models.sequelize.sync({alter: false});
         console.log('Database synchronized successfully.');
     } catch (error) {
         console.error('Error setting up the database:', error);

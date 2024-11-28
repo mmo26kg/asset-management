@@ -1,4 +1,6 @@
 const { UserBalance } = require('../models');
+const deleteUtil = require('../utils/deleteUtil');
+
 
 // Lấy tất cả UserBalance dựa trên các điều kiện tìm kiếm
 exports.getAllUserBalances = async (queryConditions, listOptions) => {
@@ -40,9 +42,7 @@ exports.updateUserBalance = async (id, data) => {
 };
 
 // Xóa một UserBalance theo ID
-exports.deleteUserBalance = async (id) => {
-    const userBalance = await UserBalance.findByPk(id);
-    if (!userBalance) return null;
-    await userBalance.destroy();
-    return true;
+exports.deleteUserBalance = async (id, option, checkDetail) => {
+    const constraints = deleteUtil.UserBalanceDeleteConstraint;
+    return await deleteUtil.deleteService(UserBalance, id, constraints, option, checkDetail);
 };

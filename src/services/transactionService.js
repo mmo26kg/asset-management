@@ -1,4 +1,6 @@
 const { Transaction } = require('../models');
+const deleteUtil = require('../utils/deleteUtil');
+
 
 
 
@@ -62,9 +64,7 @@ exports.updateTransaction = async (id, data) => {
 };
 
 // Xóa một giao dịch theo ID
-exports.deleteTransaction = async (id) => {
-    const transaction = await Transaction.findByPk(id);
-    if (!transaction) return null;
-    await transaction.destroy();
-    return true;
+exports.deleteTransaction = async (id, option, checkDetail) => {
+    const constraints = deleteUtil.TransactionDeleteConstraint;
+    return await deleteUtil.deleteService(Transaction, id, constraints, option, checkDetail);
 };

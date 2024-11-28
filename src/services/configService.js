@@ -1,4 +1,5 @@
 const { Config } = require('../models');
+const deleteUtil = require('../utils/deleteUtil');
 
 
 // Hàm lấy danh sách tài khoản theo điều kiện từ query parameters
@@ -64,9 +65,9 @@ exports.updateConfig = async (id, data) => {
 };
 
 // Xóa một cấu hình theo ID
-exports.deleteConfig = async (id) => {
-    const config = await Config.findByPk(id);
-    if (!config) return null;
-    await config.destroy();
-    return true;
+exports.deleteConfig = async (id, option, checkDetail) => {
+    const constraints = deleteUtil.ConfigDeleteConstraint;
+    return await deleteUtil.deleteService(Config, id, constraints, option, checkDetail);
 };
+
+

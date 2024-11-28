@@ -12,6 +12,6 @@ router.get('/me', authMiddleware.checkLogin, listOptionsMiddleware, transactionC
 router.get('/:id', authMiddleware.checkOwner(Transaction), transactionController.getTransactionById);       // Lấy một giao dịch theo ID
 router.post('/', authMiddleware.checkLogin, transactionController.createTransaction);          // Tạo mới một giao dịch
 router.put('/:id', authMiddleware.checkOwner(Transaction), transactionController.updateTransaction);        // Cập nhật một giao dịch
-router.delete('/:id', authMiddleware.checkOwner(Transaction), transactionController.deleteTransaction);     // Xóa một giao dịch
+router.delete('/:id/:option?/:checkDetail?', authMiddleware.checkOwner(Transaction), transactionController.deleteTransaction);     // Xóa một giao dịch
 
 module.exports = router;

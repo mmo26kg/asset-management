@@ -1,4 +1,5 @@
 const { Currency } = require('../models');
+const deleteUtil = require('../utils/deleteUtil');
 
 // Lấy tất cả các loại tiền tệ
 exports.getAllCurrencies = async (queryConditions, listOptions) => {
@@ -45,4 +46,9 @@ exports.deleteCurrency = async (id) => {
     if (!currency) return null;
     await currency.destroy();
     return true;
+};
+
+exports.deleteCurrency = async (id, option, checkDetail) => {
+    const constraints = deleteUtil.CurrencyDeleteConstraint;
+    return await deleteUtil.deleteService(Currency, id, constraints, option, checkDetail);
 };
