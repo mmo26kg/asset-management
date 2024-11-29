@@ -14,43 +14,78 @@ class DeleteConstraint {
     }
 }
 
-// Danh sách các ràng buộc xóa cho từng model
+// ==================== Định nghĩa ràng buộc xóa ====================
+
+/**
+ * Ràng buộc xóa cho model User
+ */
 exports.UserDeleteConstraint = [
-    new DeleteConstraint(models.User, models.Transaction, 'userId', 'Restrict'),
-    new DeleteConstraint(models.User, models.Account, 'userId', 'Restrict'),
+    new DeleteConstraint(models.User, models.Transaction, 'userId', 'Cascade'),
+    new DeleteConstraint(models.User, models.Account, 'userId', 'Cascade'),
     new DeleteConstraint(models.User, models.Config, 'userId', 'Cascade'),
-    new DeleteConstraint(models.User, models.UserBalance, 'userId', 'SetNull'),
+    new DeleteConstraint(models.User, models.UserBalance, 'userId', 'Cascade'),
 ];
 
+/**
+ * Ràng buộc xóa cho model Account
+ */
 exports.AccountDeleteConstraint = [
-    new DeleteConstraint(models.Account, models.Transaction, 'accountId', 'Restrict'),
-    new DeleteConstraint(models.Account, models.UserBalance, 'accountId', 'SetNull'),
+    new DeleteConstraint(models.Account, models.Transaction, 'accountId', 'Cascade'),
+    new DeleteConstraint(models.Account, models.UserBalance, 'accountId', 'Cascade'),
 ];
 
+/**
+ * Ràng buộc xóa cho model Category
+ */
 exports.CategoryDeleteConstraint = [
     new DeleteConstraint(models.Category, models.UserBalance, 'categoryId', 'Restrict'),
+    new DeleteConstraint(models.Category, models.Account, 'categoryId', 'Restrict'),
     new DeleteConstraint(models.Category, models.Category, 'parentId', 'Cascade'),
-    new DeleteConstraint(models.Category, models.AssetType, 'assetTypeId', 'SetNull'),
 ];
 
+/**
+ * Ràng buộc xóa cho model AssetType
+ */
 exports.AssetTypeDeleteConstraint = [
-    
+    new DeleteConstraint(models.AssetType, models.Category, 'assetTypeId', 'Restrict'),
+    new DeleteConstraint(models.AssetType, models.UserBalance, 'assetTypeId', 'Restrict'),
 ];
+
+/**
+ * Ràng buộc xóa cho model Config
+ */
 exports.ConfigDeleteConstraint = [
-    
+    // Config không có quan hệ phụ thuộc.
 ];
+
+/**
+ * Ràng buộc xóa cho model Currency
+ */
 exports.CurrencyDeleteConstraint = [
-    
+    new DeleteConstraint(models.Currency, models.Account, 'currencyId', 'Restrict'),
 ];
+
+/**
+ * Ràng buộc xóa cho model Stock
+ */
 exports.StockDeleteConstraint = [
-    
+    new DeleteConstraint(models.Stock, models.Account, 'stockId', 'Restrict'),
 ];
+
+/**
+ * Ràng buộc xóa cho model Transaction
+ */
 exports.TransactionDeleteConstraint = [
-    
+    // Transaction không có quan hệ phụ thuộc.
 ];
+
+/**
+ * Ràng buộc xóa cho model UserBalance
+ */
 exports.UserBalanceDeleteConstraint = [
     
 ];
+
 
 // ==================== Kiểm tra ràng buộc xóa ====================
 

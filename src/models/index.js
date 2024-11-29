@@ -40,7 +40,6 @@ const setupAssociations = () => {
     Account.belongsTo(Category, { foreignKey: 'categoryId' });
     Account.belongsTo(Stock, { foreignKey: 'stockId' });
 
-    // Các quan hệ bổ sung
     Account.hasMany(Transaction, { foreignKey: 'accountId' });
     Transaction.belongsTo(Account, { foreignKey: 'accountId' });
 
