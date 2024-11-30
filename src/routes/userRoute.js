@@ -4,6 +4,7 @@ const userController = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { User } = require('../models');
 const listOptionsMiddleware = require('../middlewares/listOptionsMiddleware');
+const userMiddleware = require('../middlewares/routeMiddleware/userRouteMiddleware')
 
 
 // Định nghĩa các route cho các API
@@ -14,7 +15,7 @@ router.put('/:id', authMiddleware.checkOwner(User), userController.updateUser); 
 router.delete('/:id/:option?/:checkDetail?', authMiddleware.checkOwner(User), userController.deleteUser);     // Xóa một người dùng
 // Option nhận giá trị: force, default, check
 
-router.post('/register', userController.registerUser);  // Đăng ký một người dùng
+router.post('/register', userMiddleware.beforeRegister, userController.registerUser);  // Đăng ký một người dùng
 router.post('/login', userController.loginUser);        // Đăng nhập vào một tài khoản người dùng
 
 module.exports = router;

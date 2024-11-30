@@ -51,7 +51,11 @@ exports.deleteUser = (req, res) => {
 exports.registerUser = async (req, res) => {
     try {
         const user = await userService.registerUser(req.body);
-        res.status(201).json({ message: 'Đăng ký thành công', user });
+        res.status(201).json({
+            message: 'Đăng ký thành công', 
+            user: user.user,
+            token: user.token,
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

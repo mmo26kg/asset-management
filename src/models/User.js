@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database'); // Import sequelize
+const enums = require('../utils/enumUtil')
+
 const User = sequelize.define('User', {
     id: {
         type: DataTypes.UUID,
@@ -9,9 +11,12 @@ const User = sequelize.define('User', {
     name: { type: DataTypes.STRING, allowNull: false },
     username: { type: DataTypes.STRING, unique: true, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
-    membership: { type: DataTypes.STRING, defaultValue: 'basic' },
+    membership: { 
+        type: DataTypes.ENUM(...Object.values(enums.Memberships).map(membership => membership.value)), 
+        defaultValue: 'basic' 
+    },
     role: {
-        type: DataTypes.ENUM('member', 'admin', 'system_admin'), // Danh sách vai trò
+        type: DataTypes.ENUM(...Object.values(enums.Roles).map(role => role.value)), // Danh sách vai trò
         allowNull: false,
         defaultValue: 'member', // Giá trị mặc định
     },
@@ -22,27 +27,6 @@ const User = sequelize.define('User', {
     freezeTableName: true
 
 });
-
-
-User.modelInfo = {
-    name: 'User',  // Tên của model
-    description: 'Đại diện cho người sử dụng hệ thống.',  // Mô tả model
-    vi: {
-        capitalize: 'Người Dùng',  // Tên dạng Capitalize cho tiếng Việt
-        upper: 'NGƯỜI DÙNG',  // Tên dạng Uppercase cho tiếng Việt
-        normalize: 'người dùng',  // Tên chuẩn hóa
-    },
-    en: {
-        capitalize: 'User',  // Tên dạng Capitalize cho tiếng Anh
-        upper: 'USER',  // Tên dạng Uppercase cho tiếng Anh
-        normalize: 'user',  // Tên chuẩn hóa
-    },
-    aliases: ['nguoidung', 'user'],  // Các tên gọi khác (ví dụ: viết tắt)
-    plural: 'Users',  // Dạng số nhiều
-    singular: 'User',  // Dạng số ít
-};
-
-
 
 
 module.exports = User;

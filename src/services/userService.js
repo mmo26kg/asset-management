@@ -27,6 +27,9 @@ exports.getAllUsers = async (queryConditions, listOptions) => {
         offset: listOptions.offset,
     });
 
+
+
+
     return {
         totalResults: result.count,
         totalPages: Math.ceil(result.count / listOptions.perpage),
@@ -87,16 +90,16 @@ exports.deleteUser = async (id, option, checkDetail) => {
 exports.registerUser = async (data) => {
     const { password, ...userData } = data;
 
-    // Kiểm tra xem tên người dùng đã tồn tại hay chưa
-    const existingUser = await User.findOne({ where: { username: userData.username } });
-    if (existingUser) {
-        throw new Error('Tên người dùng đã tồn tại');
-    }
+    // // Kiểm tra xem tên người dùng đã tồn tại hay chưa
+    // const existingUser = await User.findOne({ where: { username: userData.username } });
+    // if (existingUser) {
+    //     throw new Error('Tên người dùng đã tồn tại');
+    // }
 
-    // const roleIsSystemAdmin = data.role === "system_admin";
-    if (data.role == 'system_admin'){
-        throw new Error('Bạn không được tạo tài khoản với vai trò system_admin');
-    }
+    // // const roleIsSystemAdmin = data.role === "system_admin";
+    // if (data.role == 'system_admin'){
+    //     throw new Error('Bạn không được tạo tài khoản với vai trò system_admin');
+    // }
 
     // Mã hóa mật khẩu bằng hàm tiện ích
     const hashedPassword = await utils.hashPassword(password);
