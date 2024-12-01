@@ -10,10 +10,17 @@ const User = sequelize.define('User', {
     },
     name: { type: DataTypes.STRING, allowNull: false },
     username: { type: DataTypes.STRING, unique: true, allowNull: false },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isEmail: true, // Kiểm tra email hợp lệ
+        },
+    },
     password: { type: DataTypes.STRING, allowNull: false },
-    membership: { 
-        type: DataTypes.ENUM(...Object.values(enums.Memberships).map(membership => membership.value)), 
-        defaultValue: 'basic' 
+    membership: {
+        type: DataTypes.ENUM(...Object.values(enums.Memberships).map(membership => membership.value)),
+        defaultValue: 'basic'
     },
     role: {
         type: DataTypes.ENUM(...Object.values(enums.Roles).map(role => role.value)), // Danh sách vai trò

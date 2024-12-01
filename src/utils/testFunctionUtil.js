@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mailUtil = require('../utils/mailUtil');
 
 
 
@@ -8,6 +9,7 @@ const testFunctionController = async (req, res) => {
 
 
         console.log('A :');
+        mailUtil.sendTestEmail()
 
 
 

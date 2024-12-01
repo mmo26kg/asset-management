@@ -11,124 +11,66 @@ const emailConfig = {
     service: process.env.EMAIL_SERVICE,
 };
 
-//Test mail
-// exports.sendMail = async () => {
-//     // Tạo transporter
-//     const transporter = nodemailer.createTransport({
-//         service: 'gmail', // Dịch vụ email bạn sử dụng, ví dụ: Gmail, Outlook, etc.
-//         auth: {
-//             user: 'hongducmmo@gmail.com', // Thay thế bằng email của bạn
-//             pass: 'ybya odzz fjnr lgmd '   // Thay thế bằng mật khẩu email của bạn
-//         }
-//     });
-
-//     // Cấu hình email
-//     const mailOptions = {
-//         from: 'hongducmmo@gmail.com', // Email gửi đi
-//         to: 'hongducmmo@gmail.com', // Email nhận
-//         subject: 'Test Email', // Chủ đề email
-//         text: 'Hello, this is a test email sent from Node.js using Nodemailer.' // Nội dung email dạng văn bản
-//     };
-
-//     // Gửi email
-//     transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//             console.log('Error:', error);
-//         } else {
-//             console.log('Email sent: ' + info.response);
-//         }
-//     });
-// }
-
-
-
-// Test mail
-
-
+// Gửi email
 exports.sendEmail = async (options) => {
-    const { receiverInfo, subject, body } = options;
-
-    // ================= Chuẩn bị nội dung email =================
-    const emailContent = () => {
-        try {
-            return {
-                subject: subject || 'No Subject', // Tiêu đề email
-                text: body?.text || '',          // Nội dung dạng text
-                html: body?.html || '',          // Nội dung dạng HTML
-            };
-        } catch (error) {
-            console.error('Lỗi khi chuẩn bị nội dung email:', error.message);
-            throw error;
-        }
-    };
-
-    // ================= Cấu hình người gửi =================
-    const setupSender = () => {
-        try {
-            return {
-                name: emailConfig.senderName,
-                email: emailConfig.senderEmail,
-            };
-        } catch (error) {
-            console.error('Lỗi khi cấu hình người gửi:', error.message);
-            throw error;
-        }
-    };
-
-    // ================= Cấu hình người nhận =================
-    const setupReceiver = () => {
-        try {
-            if (!receiverInfo || !Array.isArray(receiverInfo) || receiverInfo.length === 0) {
-                throw new Error('Danh sách người nhận không hợp lệ.');
-            }
-
-            return receiverInfo.map(receiver => ({
-                name: receiver.name || '',
-                email: receiver.email,
-            }));
-        } catch (error) {
-            console.error('Lỗi khi cấu hình người nhận:', error.message);
-            throw error;
-        }
-    };
-
-    // ================= Gửi email =================
-    const sendMail = async (emailDetails, sender, receivers) => {
-        try {
-            const transporter = nodemailer.createTransport({
-                service: emailConfig.service, // Thay bằng dịch vụ mail của bạn
-                auth: {
-                    user: emailConfig.user,  // Lấy từ môi trường
-                    pass: emailConfig.pass,  // Lấy từ môi trường
-                },
-            });
-
-            const mailOptions = {
-                from: `"${sender.name}" <${sender.email}>`,
-                to: receivers.map(receiver => receiver.email).join(','),
-                subject: emailDetails.subject,
-                text: emailDetails.text,
-                html: emailDetails.html,
-            };
-
-            const result = await transporter.sendMail(mailOptions);
-            console.log('Email đã được gửi thành công:', result);
-            return result;
-        } catch (error) {
-            console.error('Lỗi khi gửi email:', error.message);
-            throw error;
-        }
-    };
-
-    // ================= Gọi các bước xử lý =================
     try {
-        const emailDetails = emailContent();
-        const sender = setupSender();
-        const receivers = setupReceiver();
+        // ================= Kiểm tra và chuẩn bị thông tin =================
+        if (!options || !options.receiverInfo || !Array.isArray(options.receiverInfo) || options.receiverInfo.length === 0) {
+            throw new Error('Danh sách người nhận không hợp lệ.');
+        }
 
-        return await sendMail(emailDetails, sender, receivers);
+        const emailDetails = {
+            subject: options.subject || 'No Subject',  // Tiêu đề email
+            text: options.body?.text || '',           // Nội dung dạng text
+            html: options.body?.html || '',           // Nội dung dạng HTML
+        };
+
+        const receivers = options.receiverInfo.map(receiver => receiver.email).join(',');
+
+        // ================= Cấu hình transporter =================
+        const transporter = nodemailer.createTransport({
+            service: emailConfig.service, // Ví dụ: Gmail
+            auth: {
+                user: emailConfig.user,
+                pass: emailConfig.pass,
+            },
+        });
+
+        // ================= Cấu hình thông tin email =================
+        const mailOptions = {
+            from: `"${emailConfig.senderName}" <${emailConfig.senderEmail}>`, // Người gửi
+            to: receivers,                                                   // Danh sách người nhận
+            subject: emailDetails.subject,                                   // Tiêu đề
+            text: emailDetails.text,                                         // Nội dung text
+            html: emailDetails.html,                                         // Nội dung HTML
+        };
+
+        // ================= Gửi email =================
+        const result = await transporter.sendMail(mailOptions);
+        console.log('Email đã được gửi thành công:', result);
+        return result;
     } catch (error) {
-        console.error('Lỗi trong quá trình gửi email:', error.message);
+        console.error('Lỗi khi gửi email:', error.message);
         throw error;
+    }
+};
+
+// Gửi email thử nghiệm
+exports.sendTestEmail = async () => {
+    try {
+        const result = await exports.sendEmail({
+            receiverInfo: [
+                { name: 'Jane Smith', email: 'hongducmmo@gmail.com' },
+            ],
+            subject: 'Test Email',
+            body: {
+                text: 'This is a plain text version of the email.',
+                html: '<p>This is an <b>HTML</b> version of the email.</p>',
+            },
+        });
+
+        console.log('Kết quả gửi email:', result);
+    } catch (error) {
+        console.error('Lỗi khi gửi email thử nghiệm:', error.message);
     }
 };
