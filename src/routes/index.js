@@ -10,6 +10,7 @@ const currencyRoute = require('./currencyRoute'); // Import route của Category
 const stockRoute = require('./stockRoute'); // Import route của Category
 const userRoute = require('./userRoute'); // Import route của Category
 const userBalanceRoute = require('./userBalanceRoute'); // Import route của Category
+const testFunction = require('../utils/testFunctionUtil'); // Import route của Category
 
 const router = express.Router();
 
@@ -23,6 +24,7 @@ router.use('/currencies', currencyRoute); // Định nghĩa route cho Category
 router.use('/stocks', stockRoute); // Định nghĩa route cho Category
 router.use('/users', userRoute); // Định nghĩa route cho Category
 router.use('/userBalances', userBalanceRoute); // Định nghĩa route cho Category
+router.use('/testFunction', testFunction); // Định nghĩa route cho Category
 
 
 
