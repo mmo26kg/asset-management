@@ -2,6 +2,7 @@
 const { User } = require('../models');
 const utils = require('../utils/authenticateUtil');
 const deleteUtil = require('../utils/deleteUtil');
+const userHook = require('../hooks/userHook');
 
 /**
  * Service: Quản lý người dùng (User Service)
@@ -88,18 +89,8 @@ exports.deleteUser = async (id, option, checkDetail) => {
  * @param {Object} data - Dữ liệu người dùng bao gồm tên và mật khẩu
  */
 exports.registerUser = async (data) => {
+
     const { password, ...userData } = data;
-
-    // // Kiểm tra xem tên người dùng đã tồn tại hay chưa
-    // const existingUser = await User.findOne({ where: { username: userData.username } });
-    // if (existingUser) {
-    //     throw new Error('Tên người dùng đã tồn tại');
-    // }
-
-    // // const roleIsSystemAdmin = data.role === "system_admin";
-    // if (data.role == 'system_admin'){
-    //     throw new Error('Bạn không được tạo tài khoản với vai trò system_admin');
-    // }
 
     // Mã hóa mật khẩu bằng hàm tiện ích
     const hashedPassword = await utils.hashPassword(password);
@@ -121,6 +112,8 @@ exports.registerUser = async (data) => {
     // Loại bỏ mật khẩu khỏi kết quả trả về
     const userWithoutPassword = user.get({ plain: true });
     delete userWithoutPassword.password;
+
+    userHook.afterRegister(userWithoutPassword);
 
     return {
         user: userWithoutPassword,

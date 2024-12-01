@@ -46,3 +46,38 @@ exports.deleteUserBalance = async (id, option, checkDetail) => {
     const constraints = deleteUtil.UserBalanceDeleteConstraint;
     return await deleteUtil.deleteService(UserBalance, id, constraints, option, checkDetail);
 };
+
+
+// Tạo mới một UserBalance
+exports.createUserBalanceByUser = async (userId) => {
+    // Helper function để kiểm tra và tạo UserBalance theo type
+    const createUserBalanceIfNotExists = async (balanceType, userId) => {
+        // Kiểm tra xem UserBalance đã tồn tại với userId và type chưa
+        const existingUserBalance = await UserBalance.findOne({
+            where: { userId, balanceType },
+        });
+
+        // Nếu đã tồn tại, bỏ qua việc tạo mới
+        if (existingUserBalance) {
+            console.log(`UserBalance với type "${balanceType}" cho userId ${userId} đã tồn tại.`);
+            return existingUserBalance;
+        }
+
+        // Tạo UserBalance mới
+        const newUserBalance = await UserBalance.create({ userId, balanceType });
+        console.log(`UserBalance với type "${balanceType}" cho userId ${userId} đã được tạo.`);
+        return newUserBalance;
+    };
+
+    // Thực hiện tạo các loại UserBalance
+    const categoryUB = await createUserBalanceIfNotExists('category', userId);
+    const assetTypeUB = await createUserBalanceIfNotExists('assetType', userId);
+    const assetUB = await createUserBalanceIfNotExists('asset', userId);
+
+    // Trả về kết quả
+    return {
+        categoryUB,
+        assetTypeUB,
+        assetUB,
+    };
+};

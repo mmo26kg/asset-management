@@ -70,4 +70,15 @@ exports.deleteConfig = async (id, option, checkDetail) => {
     return await deleteUtil.deleteService(Config, id, constraints, option, checkDetail);
 };
 
+exports.createDefaultConfigByUser = async (userId) => {
 
+    const existingConfig = await Config.findOne({ where: { userId } });
+    if (existingConfig) {
+        throw new Error(`Config đã tồn tại cho userId: ${userId}`);
+    }
+
+    const defaultConfigByUser = {
+        userId: userId,
+    }
+    return await Config.create(defaultConfigByUser);
+};
