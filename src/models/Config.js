@@ -6,9 +6,9 @@ const Config = sequelize.define('Config', {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    currency: { type: DataTypes.STRING, defaultValue: 'USD' },
+    currency: { type: DataTypes.STRING, defaultValue: 'VND' },
     themeColor: { type: DataTypes.STRING, defaultValue: '#FFFFFF' },
-    language: { type: DataTypes.STRING, defaultValue: 'en' },
+    language: { type: DataTypes.STRING, defaultValue: 'vi' },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 }, {
     timestamps: true,
