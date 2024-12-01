@@ -20,7 +20,11 @@ exports.afterRegister = async (user) => {
     // ================= Hàm tạo số dư ban đầu cho người dùng =================
     const createUserBalance = async () => {
         try {
-            userBalanceService.createUserBalanceByUser(user.id);
+            // userBalanceService.createUserBalanceByUser(user.id);
+            userBalanceService.createUserBalance({
+                userId: user.id,
+                balanceType: 'asset'
+            });
         } catch (error) {
             console.error('Lỗi xảy ra khi tạo số dự mặc định cho người dùng: ', user.id, error);
         }
