@@ -2,7 +2,7 @@ const { User } = require('../models');
 const configService = require('../services/configService');
 const userBalanceService = require('../services/userBalanceService');
 const mailUtil = require('../utils/mailUtil');
-const emailtemplate = require('../emailTemplate/welcomeUserRegister'); // Import dayjs
+const emailtemplate = require('../emailTemplate/welcomeUserRegister');
 
 
 

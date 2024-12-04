@@ -11,4 +11,28 @@ module.exports.Memberships = {
     PREMIUM: { value: 'premium', description: 'Premium membership', translate: 'Ưu tiên' },
     VIP: { value: 'vip', description: 'VIP membership', translate: 'VIP' }
 };
+module.exports.TransactionTypes = {
+    OPEN: {
+        value: 'open',
+        description: 'Open balance transaction', // Giao dịch mở đầu số dư 
+        translate: 'Số dư mở tài khoản'
+    },
+    INC: {
+        value: 'increase',
+        description: 'Increase transaction', // Giao dịch tăng số dư
+        translate: 'Giao dịch tăng'
+    },
+    DEC: {
+        value: 'decrease',
+        description: 'Decrease transaction', // Giao dịch giảm số dư
+        translate: 'Giao dịch giảm'
+    },
+    ADJ: {
+        value: 'adjust',
+        description: 'Adjustment transaction', // Giao dịch điều chỉnh số dư
+        translate: 'Điều chỉnh'
+    }
+};
+
+
 

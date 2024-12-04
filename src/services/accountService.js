@@ -1,5 +1,6 @@
 const { Account } = require('../models');
 const deleteUtil = require('../utils/deleteUtil');
+const accountHook = require('../hooks/accountHook');
 
 // const { User } = require('../models');
 
@@ -54,7 +55,9 @@ exports.getAccountById = async (id) => {
 
 // Tạo mới một tài khoản
 exports.createAccount = async (data) => {
-    return await Account.create(data);
+    const account = await Account.create(data);
+    accountHook.afterCreate(account);
+    return account;
 };
 
 // Cập nhật một tài khoản theo ID

@@ -1,6 +1,7 @@
+const { afterCreate } = require('../hooks/accountHook');
 const { Transaction } = require('../models');
 const deleteUtil = require('../utils/deleteUtil');
-
+const transactionHook = require('../hooks/transactionHook');
 
 
 
@@ -45,6 +46,7 @@ exports.getAllMyTransactions = async (queryConditions, user, listOptions) => {
     };
 };
 
+
 // Lấy một giao dịch theo ID
 exports.getTransactionById = async (id) => {
     return await Transaction.findByPk(id);
@@ -52,7 +54,9 @@ exports.getTransactionById = async (id) => {
 
 // Tạo mới một giao dịch
 exports.createTransaction = async (data) => {
-    return await Transaction.create(data);
+    const transaction = await Transaction.create(data)
+    transactionHook.afterCreate(transaction);
+    return transaction;
 };
 
 // Cập nhật một giao dịch theo ID
@@ -68,3 +72,28 @@ exports.deleteTransaction = async (id, option, checkDetail) => {
     const constraints = deleteUtil.TransactionDeleteConstraint;
     return await deleteUtil.deleteService(Transaction, id, constraints, option, checkDetail);
 };
+
+
+
+// API nâng cao
+
+exports.getAllTransactionAmountByAccount = async (accountId) => {
+    try {
+        console.log('getAllTransactionAmountByAccount: Đang lấy danh sách transaction cho accountId:', accountId);
+
+        const result = await Transaction.findAll({
+            where: {
+                accountId,
+            },
+            attributes: ['id', 'amount'],
+        });
+
+        console.log('getAllTransactionAmountByAccount: Kết quả truy vấn:', result);
+
+        return result;
+    } catch (error) {
+        console.error('getAllTransactionAmountByAccount: Đã xảy ra lỗi trong quá trình lấy dữ liệu:', error);
+        throw error; // Ném lỗi để xử lý tiếp ở cấp cao hơn
+    }
+};
+
