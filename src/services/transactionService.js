@@ -77,23 +77,21 @@ exports.deleteTransaction = async (id, option, checkDetail) => {
 
 // API nâng cao
 
-exports.getAllTransactionAmountByAccount = async (accountId) => {
-    try {
-        console.log('getAllTransactionAmountByAccount: Đang lấy danh sách transaction cho accountId:', accountId);
+// exports.getAllTransactionAmountByAccount = async (accountId) => {
+//     try {
+//         console.log('getAllTransactionAmountByAccount: Đang lấy danh sách transaction cho accountId:', accountId);
 
-        const result = await Transaction.findAll({
-            where: {
-                accountId,
-            },
-            attributes: ['id', 'amount'],
-        });
+//         const result = await Transaction.findAll({
+//             where: {
+//                 accountId,
+//             },
+//             attributes: ['id', 'amount'],
+//         });
 
-        console.log('getAllTransactionAmountByAccount: Kết quả truy vấn:', result);
-
-        return result;
-    } catch (error) {
-        console.error('getAllTransactionAmountByAccount: Đã xảy ra lỗi trong quá trình lấy dữ liệu:', error);
-        throw error; // Ném lỗi để xử lý tiếp ở cấp cao hơn
-    }
-};
+//         return result;
+//     } catch (error) {
+//         console.error('getAllTransactionAmountByAccount: Đã xảy ra lỗi trong quá trình lấy dữ liệu:', error);
+//         throw error; // Ném lỗi để xử lý tiếp ở cấp cao hơn
+//     }
+// };
 
