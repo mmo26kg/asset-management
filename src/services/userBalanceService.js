@@ -1,8 +1,12 @@
 // UserBalanceService.js
 
-const { UserBalance } = require('../models');
+const { UserBalance, Transaction } = require('../models');
 const deleteUtil = require('../utils/deleteUtil');
+const categoryService = require('../services/categoryService');
 const TreeModel = require('tree-model');
+const { getAssetTypeById } = require('./assetTypeService');
+const { getUserById } = require('./userService');
+const { getAccountById } = require('./accountService');
 
 
 
@@ -78,168 +82,206 @@ exports.updateBalanceByUser = async (id, newBalance) => {
     }
 };
 
-exports.updateRelatedUBbyTransaction = async (transaction) => {
-    const userId = transaction.userId;
+function findNode(balanceTree, key, value) {
+    return balanceTree.first((node) => node.model[key] === value) || null;
+}
 
-    // const tree = new TreeModel();
-    const userBusinessDataTree = new TreeModel();
 
-    // userBusinessDataTree.parse(userBusinessData);
-    const root = userBusinessDataTree.parse({
-        name: 'User',
-        id: userId
-    })
 
-    const assetUB = async (userId) => {
-        try {
-            // Trả về kết quả trực tiếp
-            const userBalance = await UserBalance.findOne({
-                where: {
-                    userId: userId,
-                    balanceType: 'asset',
-                }
-            });
 
-            // Kiểm tra nếu không tìm thấy bản ghi
-            if (!userBalance) {
-                throw new Error('Asset User balance not found');
+//  * 📘 Lấy User Balance và parse thành Node.
+
+async function fetchAndParseUserBalances(userId, balanceType, extraDataFunc = () => ({})) {
+    const userBalances = await UserBalance.findAll({ where: { userId, balanceType } });
+    if (!userBalances.length) throw new Error(`Không tìm thấy User Balance cho loại: ${balanceType}`);
+    return await Promise.all(userBalances.map(async ub => ({
+        id: ub.dataValues.id,
+        nodeType: 'User Balance',
+        balanceType: ub.dataValues.balanceType,
+        balance: Number(ub.dataValues.balance),
+        ...await extraDataFunc(ub)
+    })));
+}
+
+async function fetchAndParseTransaction(userId) {
+    const transaction = await Transaction.findAll({ where: { userId } });
+    if (!transaction.length) throw new Error(`Không tìm thấy Transaction nào cho user: `, userId);
+    return transaction.map(item => ({
+        id: item.id,
+        nodeType: 'Transaction',
+        name: item.name,
+        amount: Number(item.amount),
+        currency: item.currency,
+        transactionType: item.transactionType,
+        accountId: item.accountId,
+    }));
+}
+
+
+//  * 📘 Gắn UserBalance, Category hoặc Account vào cây.
+
+function attachToTree(items, balanceTree, itemType) {
+    let queue = [...items];
+    let retryCount = 0;
+    const maxRetries = items.length * 2;
+
+    while (queue.length > 0 && retryCount < maxRetries) {
+        const item = queue.shift();
+        const node = new TreeModel().parse(item);
+        let parentNode = null;
+
+        // Xử lý cho User Balance: thêm vào balanceTree trực tiếp
+        if (itemType === 'userBalance') {
+            balanceTree.addChild(node);
+        }
+
+        // Xử lý cho Category: tìm cha bằng assetTypeId hoặc parentId
+        else if (itemType === 'category') {
+            const { assetTypeId, parentId, categoryId } = item;
+            if (assetTypeId) {
+                parentNode = findNode(balanceTree, 'assetTypeId', assetTypeId);
+            } else if (parentId) {
+                parentNode = findNode(balanceTree, 'categoryId', parentId);
             }
+            if (parentNode) {
+                parentNode.addChild(node);
+            } else {
+                queue.push(item); // Chưa tìm thấy, đẩy lại vào queue để thử lại sau
+                retryCount++;
+            }
+        }
 
-            return {
-                id: userBalance.dataValues.id,
-                type: userBalance.dataValues.balanceType,
-                balance: userBalance.balance
-            };
+        // Xử lý cho Account: tìm cha bằng categoryId
+        else if (itemType === 'account') {
+            const { categoryId } = item;
+            parentNode = findNode(balanceTree, 'categoryId', categoryId);
 
-        } catch (error) {
-            // Xử lý lỗi nếu có
-            console.error(error);
-            throw error;  // Ném lại lỗi để xử lý ở nơi gọi hàm
+            if (parentNode) {
+                parentNode.addChild(node);
+            } else {
+                console.warn('Không tìm thấy category để gắn account:', item);
+            }
+        }
+
+        // Xử lý cho Transaction: tìm cha bằng accountId
+        else if (itemType === "transaction") {
+            const { accountId } = item;
+            parentNode = findNode(balanceTree, 'accountId', accountId);
+
+            if (parentNode) {
+                parentNode.addChild(node);
+            } else {
+                console.warn('Không tìm thấy account để gắn transaction: ', item);
+            }
         }
     }
 
-    const assetUBNode = userBusinessDataTree.parse(await assetUB(userId));
-    root.addChild(assetUBNode);
-
-    const assetTypeUBs = async (userId) => {
-        try {
-            // Trả về kết quả trực tiếp
-            const userBalances = await UserBalance.findAll({
-                where: {
-                    userId: userId,
-                    balanceType: 'assetType',
-                }
-            });
-
-            // Kiểm tra nếu không tìm thấy bản ghi
-            if (userBalances.length == 0) {
-                throw new Error('AssetType User balance not found');
-            }
-
-
-            return userBalances.map(a => ({
-                id: a.dataValues.id,
-                type: a.dataValues.balanceType,
-                balance: a.dataValues.balance
-            }));
-
-        } catch (error) {
-            // Xử lý lỗi nếu có
-            console.error(error);
-            throw error;  // Ném lại lỗi để xử lý ở nơi gọi hàm
-        }
+    // Cảnh báo nếu có phần tử không gắn được
+    if (queue.length > 0) {
+        console.warn(`⚠️ Các ${itemType} không gắn được:`, queue.map(item => item.id));
     }
-    const assetTypeUBNodeData = await assetTypeUBs(userId);
-    // console.log('A :', assetTypeUBNodeData);
-    assetTypeUBNodeData.forEach(assetTypeUBData => {
-        const assetTypeUBNode = userBusinessDataTree.parse(assetTypeUBData);
-        // console.log('A :', assetTypeUBNode);
-        assetUBNode.addChild(assetTypeUBNode);
+}
+
+
+//  * 📘 Lấy AssetType bổ sung cho User Balance.
+
+async function getAssetTypeExtraData(userBalance) {
+    const assetType = await getAssetTypeById(userBalance.dataValues.assetTypeId);
+    return { assetTypeId: userBalance.dataValues.assetTypeId, assetTypeName: assetType?.dataValues?.name || 'N/A' };
+}
+
+
+//  * 📘 Lấy Category bổ sung cho User Balance.
+
+async function getCategoryExtraData(userBalance) {
+    const category = await categoryService.getCategoryById(userBalance.dataValues.categoryId);
+    return {
+        categoryId: userBalance.dataValues.categoryId,
+        categoryName: category?.dataValues?.name || 'N/A',
+        assetTypeId: category?.dataValues?.assetTypeId || null,
+        parentId: category?.dataValues?.parentId || null
+    };
+}
+
+async function getAccountExtraData(userBalance) {
+    const account = await getAccountById(userBalance.dataValues.accountId);
+    return {
+        accountId: account.dataValues.id,
+        accountName: account?.dataValues?.name || 'N/A',
+        categoryId: account?.dataValues?.categoryId
+    };
+}
+
+exports.buildBalanceTreeForUser = async (userId) => {
+    // const userId = transaction.userId;
+    const user = await getUserById(userId);
+    const balanceTree = new TreeModel().parse({
+        nodeType: 'User',
+        id: user.id,
+        name: user.name,
+        username: user.username
     });
 
 
-    console.log('In full cây tài sản');
-    console.dir(root.model, { depth: null });
-
-
-
-    // Tạo cấu trúc cây từ dữ liệu JSON
-    // const root = tree.parse(treeData);
-
-    // // 1. Duyệt cây và in ra các node
-    // console.log('--- Duyệt cây và in các node ---');
-    // root.walk(function (node) {
-    //     console.log(node.model.name);
-    // });
-
-    // const getDescendantOfNode = (node) => {
-    //     return node.all();
-    // };
-
-    // const nodeA = root.first(n => n.model.name.includes('Bất động sản'));
-    // const childOfA = getDescendantOfNode(nodeA).map(n => {
-    //     return { ...n.model };
-    // }).filter(n => n.name.includes('Transaction'));
-    // console.log('Các tập con của Phương tiện :', childOfA);
-
-
-
-
-
-    // await this.syncAccountUB(transaction.accountId);
-    // await this.syncCategoryUB(transaction);
-};
-
-exports.syncAccountUB = async (accountId) => {
     try {
-        // const transactions = await transactionService.getAllTransactionAmountByAccount(accountId);
+        // Tạo các User Balance Nodes và gắn vào cây
+        const [assetUB] = await fetchAndParseUserBalances(userId, 'asset');
+        const assetUBNode = new TreeModel().parse(assetUB);
+        balanceTree.addChild(assetUBNode);
 
-        if (!transactions || transactions.length === 0) {
-            throw new Error(`Không có giao dịch nào cho accountId: ${accountId}`);
-        }
+        // Tạo AssetType User Balance Nodes
+        const assetTypeUBs = await fetchAndParseUserBalances(userId, 'assetType', getAssetTypeExtraData);
+        attachToTree(assetTypeUBs, assetUBNode, 'userBalance');
 
-        const totalAmount = transactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
-        const userBalance = await UserBalance.findOne({ where: { accountId } });
+        // Tạo Category User Balance Nodes
+        const categoryUBs = await fetchAndParseUserBalances(userId, 'category', getCategoryExtraData);
+        attachToTree(categoryUBs, balanceTree, 'category');
 
-        if (!userBalance) throw new Error(`Không tìm thấy UserBalance cho accountId: ${accountId}`);
+        // Tạo Account User Balance Nodes
+        const accountUBs = await fetchAndParseUserBalances(userId, 'account', getAccountExtraData);
+        attachToTree(accountUBs, balanceTree, 'account');
 
-        await userBalance.update({ balance: totalAmount });
+        const transactions = await fetchAndParseTransaction(userId);
+        attachToTree(transactions, balanceTree, 'transaction');
+
+        // console.log('🌲 Cấu trúc cây tài sản của User:');
+        // console.dir(balanceTree.model, { depth: null });
+
+        return balanceTree
+
+
+
     } catch (error) {
-        throw new Error(`Lỗi khi đồng bộ số dư cho accountId ${accountId}: ${error.message}`);
+        console.error('❌ Lỗi trong quá trình xây dựng cây User Balance:', error);
     }
 };
 
-//#endregion
 
-//#region 3. API dự phòng
+function totalBalanceOfAnyNodeUB(node) {
+    const transactionNodes = node.all(n => n.model.nodeType == 'Transaction');
+    const totalBalance = transactionNodes.reduce((total, n) => total + Number(n.model.amount), 0);
+    return totalBalance;
+}
 
-exports.syncCategoryUB = (transaction) => {
-    console.log('Tính toán Category User Balance của transaction:', transaction);
+function updateUBNodes(balanceTree, balanceType) {
 
-    // Lấy list tất cả các category liên quan tới transaction
-    // Lấy account của transaction
-    // Từ account, tìm ra được category đầu tiên
-    // Tiếp tục tìm category theo parentId của category vừa tìm được cho đến khi tìm được tất cả (category cuối cùng không có parentId)
-    // Lặp mảng category liên quan
-    // Với mỗi category trong chuỗi, tìm kiếm UB tương ứng có tồn tại chưa
-    // Nếu chưa thì cần tạo mới
-    // Nếu có rồi thì cần chạy hàm cập nhật số dư UB
-    // Xét 1 category
-    // Cần lấy tất cả các category con
-    // Lấy đến khi hết category con
-    // Cần lấy thêm tất cả các account con
-
+    const userBalanceNodes = balanceTree.all((node) =>
+        node.model.nodeType === 'User Balance' &&
+        node.model.balanceType === balanceType
+    )
+    for (const node of userBalanceNodes) {
+        const totalBalance = totalBalanceOfAnyNodeUB(node);
+        node.model.balance = totalBalance;
+    }
 
 };
 
-exports.syncAssetTypeUB = () => {
-    throw new Error('Chức năng đồng bộ Asset Type UB chưa được triển khai.');
-};
+exports.updateRelatedUBbyTransaction = async (transaction) => {
+    userId = transaction.userId;
+    const balanceTree = await this.buildBalanceTreeForUser(userId);
 
-exports.syncAssetUB = () => {
-    throw new Error('Chức năng đồng bộ Asset UB chưa được triển khai.');
-};
+    ['account', 'category', 'assetType', 'asset'].forEach(balanceType => updateUBNodes(balanceTree, balanceType));
 
-//#endregion
+    console.dir(balanceTree.model, { depth: null });
 
-
+}

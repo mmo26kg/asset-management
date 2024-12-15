@@ -12,7 +12,7 @@ const enumUtil = require('../utils/enumUtil'); // Import các hàm tiện ích E
  * Thực hiện các công việc chính:
  * 1. Tạo UserBalance cho Account mới.
  * 2. Tạo UserBalance cho các Category liên quan (kể cả các Category cấp cha).
- * 3. Tạo UserBalance cho AssetType liên quan.
+ * 3. Tạo UserBalance cho AssetType liên quan. 
  * 4. Tạo Transaction số dư đầu kỳ cho Account.
  * 
  * @param {Object} account - Dữ liệu của Account vừa được tạo.
@@ -24,12 +24,12 @@ exports.afterCreate = async (account) => {
 
         // === 2. Tạo UserBalance cho các Category liên quan ===
         const { categoryUserBalances, assetTypeId } = await createCategoryUserBalances(account.userId, account.categoryId);
-        console.log('Danh sách UserBalance của các Category:', categoryUserBalances);
+        // console.log('Danh sách UserBalance của các Category:', categoryUserBalances);
 
         // === 3. Tạo UserBalance cho AssetType liên quan ===
         if (assetTypeId) {
             const assetTypeUserBalance = await createAssetTypeUserBalance(account.userId, assetTypeId);
-            console.log('UserBalance của AssetType:', assetTypeUserBalance.dataValues);
+            // console.log('UserBalance của AssetType:', assetTypeUserBalance.dataValues);
         } else {
             console.warn('Không xác định được AssetType liên quan đến Account.');
         }
@@ -59,7 +59,7 @@ async function createAccountUserBalance(account) {
             userId: account.userId,
             accountId: account.id
         });
-        console.log('UserBalance của Account:', accountUserBalance.dataValues);
+        // console.log('UserBalance của Account:', accountUserBalance.dataValues);
         return accountUserBalance;
     } catch (error) {
         console.error('Lỗi khi tạo UserBalance cho Account:', error);
@@ -82,7 +82,6 @@ async function createCategoryUserBalances(userId, categoryId) {
     try {
         while (queue.length > 0) {
             const currentCategoryId = queue.shift(); // Lấy category đầu tiên từ hàng đợi
-
             // Tạo UserBalance cho category hiện tại
             const newUserBalance = await userBalanceService.createUserBalance({
                 balanceType: 'category',
@@ -97,12 +96,17 @@ async function createCategoryUserBalances(userId, categoryId) {
             // Lấy thông tin category và cha của nó
             const currentCategory = await categoryService.getCategoryById(currentCategoryId);
             const parentCategoryId = currentCategory?.parentId;
+            if (currentCategory == null) {
+                throw new Error("Category không tồn tại");
+            }
+            // console.log('A2 :', parentCategoryId);
 
             // Nếu có category cha, thêm vào hàng đợi để xử lý
             if (parentCategoryId) {
                 queue.push(parentCategoryId);
             } else {
                 assetTypeId = currentCategory?.assetTypeId; // Gán assetTypeId khi gặp category gốc
+                // console.log('A ádfasdfa:', assetTypeId);
             }
         }
     } catch (error) {

@@ -22,6 +22,22 @@ exports.getAllAssetTypes = async (queryConditions, listOptions) => {
         data: result.rows,
     };
 };
+exports.getAllAssetTypeSimple = async (conditions) => {
+
+    const result = await AssetType.findAndCountAll({
+        where: {
+            conditions
+        }
+    });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
+};
 
 // Lấy một loại tài sản theo ID
 exports.getAssetTypeById = async (id) => {

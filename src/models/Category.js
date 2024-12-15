@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database'); // Import sequelize
+const categoryHook = require('../hooks/categoryHook');
 const Category = sequelize.define('Category', {
     id: {
         type: DataTypes.UUID,
@@ -12,7 +13,15 @@ const Category = sequelize.define('Category', {
 }, {
     timestamps: true,
     paranoid: true,
-    freezeTableName: true
+    freezeTableName: true,
+    hooks: {
+        beforeCreate: async (category, options) => {
+            categoryHook.validateCategoryConstraints(category);
+        },
+        beforeUpdate: async (category, options) => {
+            categoryHook.validateCategoryConstraints(category);
+        }
+    }
 
 });
 
