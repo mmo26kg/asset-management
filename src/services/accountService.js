@@ -63,8 +63,13 @@ exports.createAccount = async (data) => {
 // Cập nhật một tài khoản theo ID
 exports.updateAccount = async (id, data) => {
     const account = await Account.findByPk(id);
+    let updateCategory = false;
+    if (data.categoryId !== account.dataValues.categoryId) {
+        updateCategory = true;
+    }
     if (!account) return null;
     await account.update(data);
+    accountHook.afterUpdate(account, data, updateCategory);
     return account;
 };
 

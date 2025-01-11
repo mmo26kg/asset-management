@@ -1,4 +1,3 @@
-const { afterCreate } = require('../hooks/accountHook');
 const { Transaction } = require('../models');
 const deleteUtil = require('../utils/deleteUtil');
 const transactionHook = require('../hooks/transactionHook');
@@ -64,13 +63,17 @@ exports.updateTransaction = async (id, data) => {
     const transaction = await Transaction.findByPk(id);
     if (!transaction) return null;
     await transaction.update(data);
+    transactionHook.afterUpdate(transaction);
     return transaction;
 };
 
 // Xóa một giao dịch theo ID
 exports.deleteTransaction = async (id, option, checkDetail) => {
+    const transaction = await Transaction.findByPk(id);
     const constraints = deleteUtil.TransactionDeleteConstraint;
-    return await deleteUtil.deleteService(Transaction, id, constraints, option, checkDetail);
+    const result = await deleteUtil.deleteService(Transaction, id, constraints, option, checkDetail);
+    transactionHook.afterDelete(transaction);
+    return result;
 };
 
 

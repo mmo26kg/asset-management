@@ -1,7 +1,14 @@
-const { updateRelatedUBbyTransaction } = require('../services/treeService');
-const userBalanceService = require('../services/userBalanceService');
+const { updateUserUB } = require('../utils/treeUtil');
 
 
 exports.afterCreate = async (transaction) => {
-    await updateRelatedUBbyTransaction(transaction);
+    await updateUserUB(transaction.userId);
+};
+
+exports.afterUpdate = async (transaction) => {
+    await updateUserUB(transaction.userId);
+};
+
+exports.afterDelete = async (transaction) => {
+    await updateUserUB(transaction.userId);
 };

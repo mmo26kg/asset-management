@@ -1,0 +1,44 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:${PORT}"
+    environment:
+      # Server configuration
+      PORT: ${PORT}
+
+      # Database configuration for MySQL
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DIALECT: ${DB_DIALECT}
+      DB_LOG_QUERIES: ${DB_LOG_QUERIES}
+      DB_FORCE_SYNC: ${DB_FORCE_SYNC}
+
+      # Other configuration
+      SECRET_KEY: ${SECRET_KEY}
+      TOKEN_EXPIRATION: ${TOKEN_EXPIRATION}
+      NODE_ENV: ${NODE_ENV}
+      CREAT_SYSTEM_ADMIN_KEY: ${CREAT_SYSTEM_ADMIN_KEY}
+
+      # Email config
+      EMAIL_SENDER_NAME: ${EMAIL_SENDER_NAME}
+      EMAIL_SENDER_EMAIL: ${EMAIL_SENDER_EMAIL}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      EMAIL_SERVICE: ${EMAIL_SERVICE}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+

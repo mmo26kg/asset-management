@@ -11,7 +11,7 @@ const userHook = require('../hooks/userHook');
 
 // ============================
 // *** CRUD Operations ***
-
+    
 /**
  * Lấy tất cả người dùng dựa trên các điều kiện tìm kiếm
  * @param {Object} queryConditions - Các điều kiện tìm kiếm
@@ -148,7 +148,7 @@ exports.loginUser = async (credentials) => {
         role: user.role,
     };
 
-    // Tạo token bằng hàm tiện ích
+    // Tạo token bằng hàm tiện íchv
     const token = utils.generateToken(payload);
     utils.checkTokenExpiration(token);
 

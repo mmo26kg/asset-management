@@ -5,7 +5,7 @@ const mysql = require('mysql2/promise');
 // Khởi tạo đối tượng Sequelize
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
+    dialect: 'mysql',
     port: process.env.DB_PORT,
     logging: process.env.DB_LOG_QUERIES === 'true' ? console.log : false,
 });

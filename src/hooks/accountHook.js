@@ -2,9 +2,9 @@
 const { Account, Transaction } = require('../models');
 const userBalanceService = require('../services/userBalanceService');
 const transactionService = require('../services/transactionService');
-const accountService = require('../services/accountService');
 const categoryService = require('../services/categoryService');
 const enumUtil = require('../utils/enumUtil'); // Import các hàm tiện ích Enum
+const { updateUserUB } = require('../utils/treeUtil');
 
 // ================== Hàm chính xử lý afterCreate của Account ==================
 /**
@@ -42,6 +42,8 @@ exports.afterCreate = async (account) => {
         throw error;
     }
 };
+
+
 
 // ================== Nhóm hàm tiện ích hỗ trợ xử lý afterCreate ==================
 
@@ -151,10 +153,30 @@ async function createDefaultTransaction(account) {
             transactionType: 'open'
         };
 
-        const transaction = await transactionService.createTransaction(defaultTransactionInfo);
+        // const transaction = await transactionService.createTransaction(defaultTransactionInfo);
+        const transaction = await Transaction.create(defaultTransactionInfo);
+        await updateUserUB(transaction.userId);
         return transaction;
     } catch (error) {
         console.error('Lỗi khi tạo Transaction mặc định:', error);
+        throw error;
+    }
+}
+
+
+exports.afterUpdate = async (account, data, updateCategory) => {
+    console.log('Update Category :', updateCategory);
+    console.log('Data :', data.categoryId);
+    console.log('Account :', account.dataValues.categoryId);
+    try {
+        if (updateCategory) {
+            const userId = account.userId;
+            await updateUserUB(userId);
+            return
+        }
+        console.log('Không cần update cây balance');
+    } catch (error) {
+        console.error('Lỗi khi xử lý afterUpdate:', error);
         throw error;
     }
 }
