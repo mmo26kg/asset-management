@@ -7,10 +7,10 @@ const Account = sequelize.define('Account', {
         primaryKey: true,
     },
     name: { type: DataTypes.STRING, allowNull: false },
-    balance: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 0.0 },
+    balance: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0.0 },
     note: { type: DataTypes.TEXT, defaultValue: '' },
     share: { type: DataTypes.INTEGER, defaultValue: 0 },
-    price: { type: DataTypes.DECIMAL, defaultValue: 0.0 },
+    price: { type: DataTypes.FLOAT, defaultValue: 0.0 },
     rate: { type: DataTypes.FLOAT, defaultValue: 1.0 },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 }, {
