@@ -16,11 +16,11 @@ const Currency = require('./Currency');
 
 // Thiết lập các quan hệ giữa các mô hình
 const setupAssociations = () => {
-    User.hasMany(Transaction, { foreignKey: 'userId'});
-    Transaction.belongsTo(User, { foreignKey: 'userId'});
+    User.hasMany(Transaction, { foreignKey: 'userId' });
+    Transaction.belongsTo(User, { foreignKey: 'userId' });
 
-    User.hasMany(Account, { foreignKey: 'userId'});
-    Account.belongsTo(User, { foreignKey: 'userId'});
+    User.hasMany(Account, { foreignKey: 'userId' });
+    Account.belongsTo(User, { foreignKey: 'userId' });
 
     Account.belongsTo(Currency, { foreignKey: 'currencyId' });
     Currency.hasMany(Account, { foreignKey: 'currencyId' });
@@ -37,7 +37,7 @@ const setupAssociations = () => {
     Category.belongsTo(AssetType, { foreignKey: 'assetTypeId' });
     AssetType.hasMany(Category, { foreignKey: 'assetTypeId' });
 
-    Account.belongsTo(Category, { foreignKey: 'categoryId' });
+    Account.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
     Account.belongsTo(Stock, { foreignKey: 'stockId' });
 
     Account.hasMany(Transaction, { foreignKey: 'accountId' });

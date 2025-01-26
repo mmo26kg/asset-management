@@ -1,4 +1,4 @@
-const { Category }  = require('../models');
+const { Category } = require('../models');
 const deleteUtil = require('../utils/deleteUtil');
 
 
@@ -11,7 +11,7 @@ exports.getAllCategories = async (queryConditions, listOptions) => {
         },
         order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
-        offset: listOptions.offset,
+        offset: listOptions.offset
     });
 
     return {

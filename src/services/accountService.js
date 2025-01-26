@@ -1,4 +1,6 @@
 const { Account } = require('../models');
+const { Category } = require('../models');
+
 const deleteUtil = require('../utils/deleteUtil');
 const accountHook = require('../hooks/accountHook');
 
@@ -14,6 +16,13 @@ exports.getAllAccounts = async (queryConditions, listOptions) => {
         order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
+        include: [
+            {
+                model: Category,
+                as: 'category', // Trùng với alias đã khai báo trong model
+                attributes: ['id', 'name', 'icon']
+            }
+        ]
     });
 
     return {
@@ -36,6 +45,14 @@ exports.getAllMyAccounts = async (queryConditions, user, listOptions) => {
         order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
+        include: [
+            {
+                model: Category,
+                as: 'category', // Trùng với alias đã khai báo trong model
+                attributes: ['id', 'name', 'icon']
+            }
+        ]
+
     });
 
     return {
@@ -50,7 +67,15 @@ exports.getAllMyAccounts = async (queryConditions, user, listOptions) => {
 
 // Lấy một tài khoản theo ID
 exports.getAccountById = async (id) => {
-    return await Account.findByPk(id);
+    return await Account.findByPk(id, {
+        include: [
+            {
+                model: Category,
+                as: 'category', // Trùng với alias đã khai báo trong model
+                attributes: ['id', 'name', 'icon']
+            }
+        ]
+    });
 };
 
 // Tạo mới một tài khoản
