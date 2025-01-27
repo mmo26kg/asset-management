@@ -16,11 +16,25 @@ exports.generateUploadUrl = async (filename) => {
         Key: `uploads/${filename}`,
         Expires: 3600,  // URL có hiệu lực trong 1 giờ
     };
+    await s3.getSignedUrlPromise('putObject', params)
 
-    return await s3.getSignedUrlPromise('putObject', params);
+    return await s3.getSignedUrlPromise('getObject', params);
 };
 
-// Lấy URL công khai của ảnh (nếu bucket public)
+// Lấy URL của ảnh từ Cloudflare R2 (tạo URL signed)
 exports.getImageUrl = async (imageKey) => {
-    return `${process.env.R2_ENDPOINT}/${process.env.R2_BUCKET_NAME}/${imageKey}`;
+    const params = {
+        Bucket: process.env.R2_BUCKET_NAME,
+        Key: `uploads/${imageKey}`, // `imageKey` là tên file bạn muốn truy cập
+        Expires: 3600,  // URL có hiệu lực trong 1 giờ
+    };
+
+    // Tạo URL signed cho ảnh
+    try {
+        const url = await s3.getSignedUrlPromise('getObject', params);
+        return url;
+    } catch (error) {
+        console.error('Lỗi khi lấy URL:', error);
+        throw new Error('Không thể lấy URL cho ảnh');
+    }
 };
