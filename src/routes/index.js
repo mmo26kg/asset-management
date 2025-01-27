@@ -11,6 +11,7 @@ const stockRoute = require('./stockRoute'); // Import route của Category
 const userRoute = require('./userRoute'); // Import route của Category
 const userBalanceRoute = require('./userBalanceRoute'); // Import route của Category
 const testFunction = require('../utils/testFunctionUtil'); // Import route của Category
+const imageRoute = require('./imageRoute'); // Import route của Category
 const { createSampleData } = require('../systemMasterData/assetType&Category');
 const { getAssetTypeCategoryTree } = require('../systemMasterData/assetType&Category');
 
@@ -27,6 +28,7 @@ router.use('/currencies', currencyRoute); // Định nghĩa route cho Category
 router.use('/stocks', stockRoute); // Định nghĩa route cho Category
 router.use('/users', userRoute); // Định nghĩa route cho Category
 router.use('/userBalances', userBalanceRoute); // Định nghĩa route cho Category
+router.use('/images', imageRoute); // Định nghĩa route cho Category
 router.use('/testFunction', testFunction); // Định nghĩa route cho Category
 router.post('/seed', async (req, res) => {
     try {
