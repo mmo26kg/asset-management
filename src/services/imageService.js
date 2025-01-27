@@ -12,7 +12,7 @@ const s3 = new AWS.S3({
 // Tạo URL để upload ảnh lên Cloudflare R2
 exports.generateUploadUrl = async (filename) => {
     const params = {
-        Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+        Bucket: process.env.R2_BUCKET_NAME,
         Key: `uploads/${filename}`,
         Expires: 3600,  // URL có hiệu lực trong 1 giờ
     };
