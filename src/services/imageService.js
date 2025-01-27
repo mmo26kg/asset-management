@@ -22,5 +22,5 @@ exports.generateUploadUrl = async (filename) => {
 
 // Lấy URL công khai của ảnh (nếu bucket public)
 exports.getImageUrl = async (imageKey) => {
-    return `${process.env.CLOUDFLARE_ENDPOINT}/${process.env.CLOUDFLARE_BUCKET_NAME}/${imageKey}`;
+    return `${process.env.R2_ENDPOINT}/${process.env.R2_BUCKET_NAME}/${imageKey}`;
 };
