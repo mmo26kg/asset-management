@@ -9,8 +9,8 @@ exports.getUploadUrl = async (req, res) => {
             return res.status(400).json({ error: 'Filename is required' });
         }
 
-        const uploadUrl = await imageService.generateUploadUrl(filename);
-        res.json({ uploadUrl });
+        const result = await imageService.generateUploadUrl(filename);
+        res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -16,9 +16,9 @@ exports.generateUploadUrl = async (filename) => {
         Key: `uploads/${filename}`,
         Expires: 3600,  // URL có hiệu lực trong 1 giờ
     };
-    await s3.getSignedUrlPromise('putObject', params)
-
-    return await s3.getSignedUrlPromise('getObject', params);
+    const uploadUrl = await s3.getSignedUrlPromise('putObject', params)
+    const imageUrl = await s3.getSignedUrlPromise('getObject', params)
+    return { uploadUrl, imageUrl }
 };
 
 // Lấy URL của ảnh từ Cloudflare R2 (tạo URL signed)
