@@ -20,10 +20,17 @@ exports.getAllUserBalances = (req, res) => {
     handleServiceRequest(res, () => userBalanceService.getAllUserBalances(req.query, req.listOptions));
 };
 
+// Controller lấy tất cả các giao dịch
+exports.getAllMyUserBalances = (req, res) => {
+    handleServiceRequest(res, () => userBalanceService.getAllMyUserBalances(req.query, req.user, req.listOptions));
+};
+
+
 // Controller lấy một số dư người dùng theo ID
 exports.getUserBalanceById = (req, res) => {
     handleServiceRequest(res, () => userBalanceService.getUserBalanceById(req.params.id, req.listOptions));
 };
+
 
 // Controller tạo mới một số dư người dùng
 exports.createUserBalance = (req, res) => {

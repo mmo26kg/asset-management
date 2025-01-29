@@ -11,7 +11,7 @@ const UserBalance = sequelize.define('UserBalance', {
         allowNull: false,
         defaultValue: 'account',
     },
-    balance: { type: DataTypes.DECIMAL, allowNull: false, defaultValue: 0.0 },
+    balance: { type: DataTypes.DOUBLE, allowNull: false, defaultValue: 0.0 },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 }, {
     timestamps: true,

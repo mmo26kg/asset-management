@@ -25,6 +25,27 @@ exports.getAllUserBalances = async (queryConditions, listOptions) => {
     };
 };
 
+exports.getAllMyUserBalances = async (queryConditions, user, listOptions) => {
+    const result = await UserBalance.findAndCountAll({
+        where: {
+            ...queryConditions,
+            userId: user.id,
+            ...listOptions.whereCondition,
+        },
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
+        limit: listOptions.perpage,
+        offset: listOptions.offset,
+    });
+
+    return {
+        totalResults: result.count,
+        totalPages: Math.ceil(result.count / listOptions.perpage),
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: result.rows,
+    };
+};
+
 exports.getUserBalanceById = async (id) => await UserBalance.findByPk(id);
 
 exports.createUserBalance = async (data) => {
