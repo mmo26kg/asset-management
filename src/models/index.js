@@ -43,13 +43,13 @@ const setupAssociations = () => {
     Account.hasMany(Transaction, { foreignKey: 'accountId' });
     Transaction.belongsTo(Account, { foreignKey: 'accountId' });
 
-    UserBalance.belongsTo(Account, { foreignKey: 'accountId' });
+    UserBalance.belongsTo(Account, { foreignKey: 'accountId', as: "account" });
     Account.hasMany(UserBalance, { foreignKey: 'accountId' });
 
-    UserBalance.belongsTo(Category, { foreignKey: 'categoryId' });
+    UserBalance.belongsTo(Category, { foreignKey: 'categoryId', as: "category" });
     Category.hasMany(UserBalance, { foreignKey: 'categoryId' });
 
-    UserBalance.belongsTo(AssetType, { foreignKey: 'assetTypeId' });
+    UserBalance.belongsTo(AssetType, { foreignKey: 'assetTypeId', as: "assetType" });
     AssetType.hasMany(UserBalance, { foreignKey: 'assetTypeId' });
 };
 

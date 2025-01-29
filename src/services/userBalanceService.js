@@ -1,5 +1,5 @@
 // UserBalanceService.js
-const { UserBalance, Transaction } = require('../models');
+const { UserBalance, Transaction, AssetType, Category, Account } = require('../models');
 const deleteUtil = require('../utils/deleteUtil');
 const TreeModel = require('tree-model');
 
@@ -35,6 +35,23 @@ exports.getAllMyUserBalances = async (queryConditions, user, listOptions) => {
         order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
+        include: [
+            {
+                model: Category,
+                as: 'category',
+                // attributes: ['id', 'name', 'icon']
+            },
+            {
+                model: AssetType,
+                as: 'assetType',
+                // attributes: ['id', 'name', 'icon']
+            },
+            {
+                model: Account,
+                as: 'account',
+                // attributes: ['id', 'name']
+            }
+        ]
     });
 
     return {
