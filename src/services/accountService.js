@@ -1,4 +1,4 @@
-const { Account } = require('../models');
+const { Account, AssetType } = require('../models');
 const { Category } = require('../models');
 
 const deleteUtil = require('../utils/deleteUtil');
@@ -20,7 +20,14 @@ exports.getAllAccounts = async (queryConditions, listOptions) => {
             {
                 model: Category,
                 as: 'category', // Trùng với alias đã khai báo trong model
-                attributes: ['id', 'name', 'icon']
+                attributes: ['id', 'name', 'icon'],
+                include: [
+                    {
+                        model: AssetType,
+                        as: 'assetType', // Trùng với alias đã khai báo trong model
+                        attributes: ['id', 'name', 'icon'],
+                    }
+                ]
             }
         ]
     });
@@ -49,10 +56,16 @@ exports.getAllMyAccounts = async (queryConditions, user, listOptions) => {
             {
                 model: Category,
                 as: 'category', // Trùng với alias đã khai báo trong model
-                attributes: ['id', 'name', 'icon']
+                attributes: ['id', 'name', 'icon'],
+                include: [
+                    {
+                        model: AssetType,
+                        as: 'assetType', // Trùng với alias đã khai báo trong model
+                        attributes: ['id', 'name', 'icon'],
+                    }
+                ]
             }
         ]
-
     });
 
     return {
