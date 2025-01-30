@@ -14,6 +14,30 @@ exports.getAllUserBalances = async (queryConditions, listOptions) => {
         order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
         offset: listOptions.offset,
+        include: [
+            {
+                model: Category,
+                as: 'category',
+                include: [
+                    {
+                        model: AssetType,
+                        as: 'assetType',
+                        attributes: ['id', 'name']
+                    }
+                ]
+                // attributes: ['id', 'name', 'icon']
+            },
+            {
+                model: AssetType,
+                as: 'assetType',
+                // attributes: ['id', 'name', 'icon']
+            },
+            {
+                model: Account,
+                as: 'account',
+                // attributes: ['id', 'name']
+            }
+        ]
     });
 
     return {
@@ -39,6 +63,13 @@ exports.getAllMyUserBalances = async (queryConditions, user, listOptions) => {
             {
                 model: Category,
                 as: 'category',
+                include: [
+                    {
+                        model: AssetType,
+                        as: 'assetType',
+                        attributes: ['id', 'name']
+                    }
+                ]
                 // attributes: ['id', 'name', 'icon']
             },
             {

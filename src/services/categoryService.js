@@ -1,4 +1,4 @@
-const { Category } = require('../models');
+const { Category, AssetType } = require('../models');
 const deleteUtil = require('../utils/deleteUtil');
 
 
@@ -11,7 +11,14 @@ exports.getAllCategories = async (queryConditions, listOptions) => {
         },
         order: [[listOptions.sortBy, listOptions.sortOrder]],
         limit: listOptions.perpage,
-        offset: listOptions.offset
+        offset: listOptions.offset,
+        include: [
+            {
+                model: AssetType,
+                as: 'assetType',
+                // attributes: ['id', 'name', 'icon']
+            }
+        ]
     });
 
     return {

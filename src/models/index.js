@@ -34,7 +34,7 @@ const setupAssociations = () => {
     Category.hasMany(Category, { as: 'subcategories', foreignKey: 'parentId' });
     Category.belongsTo(Category, { as: 'parent', foreignKey: 'parentId' });
 
-    Category.belongsTo(AssetType, { foreignKey: 'assetTypeId' });
+    Category.belongsTo(AssetType, { foreignKey: 'assetTypeId', as: 'assetType' });
     AssetType.hasMany(Category, { foreignKey: 'assetTypeId' });
 
     Account.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
