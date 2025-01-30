@@ -35,7 +35,20 @@ exports.getAllUserBalances = async (queryConditions, listOptions) => {
             {
                 model: Account,
                 as: 'account',
-                // attributes: ['id', 'name']
+                include: [
+                    {
+                        model: Category,
+                        as: 'category',
+                        attributes: ['id', 'name', 'icon'],
+                        include: [
+                            {
+                                model: AssetType,
+                                as: 'assetType',
+                                attributes: ['id', 'name', 'icon']
+                            }
+                        ]
+                    }
+                ]
             }
         ]
     });
@@ -80,7 +93,20 @@ exports.getAllMyUserBalances = async (queryConditions, user, listOptions) => {
             {
                 model: Account,
                 as: 'account',
-                // attributes: ['id', 'name']
+                include: [
+                    {
+                        model: Category,
+                        as: 'category',
+                        attributes: ['id', 'name', 'icon'],
+                        include: [
+                            {
+                                model: AssetType,
+                                as: 'assetType',
+                                attributes: ['id', 'name', 'icon']
+                            }
+                        ]
+                    }
+                ]
             }
         ]
     });
