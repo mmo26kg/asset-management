@@ -24,6 +24,11 @@ exports.getAllMyAccounts = (req, res) => {
     handleServiceRequest(res, () => accountService.getAllMyAccounts(req.query, req.user, req.listOptions));
 };
 
+// Controller lấy tất cả các tài khoản
+exports.getAllMyAccountsByAssetType = (req, res) => {
+    handleServiceRequest(res, () => accountService.getAllMyAccountsByAssetType(req.query, req.user, req.params.assetTypeId, req.listOptions));
+};
+
 // Controller lấy một tài khoản theo ID
 exports.getAccountById = (req, res) => {
     handleServiceRequest(res, () => accountService.getAccountById(req.params.id));

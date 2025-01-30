@@ -60,7 +60,7 @@ exports.getAllMyAccounts = async (queryConditions, user, listOptions) => {
                 include: [
                     {
                         model: AssetType,
-                        as: 'assetType', // Trùng với alias đã khai báo trong model
+                        as: 'assetType',
                         attributes: ['id', 'name', 'icon'],
                     }
                 ]
@@ -77,6 +77,56 @@ exports.getAllMyAccounts = async (queryConditions, user, listOptions) => {
     };
 };
 
+// Hàm lấy danh sách tài khoản của một user
+exports.getAllMyAccountsByAssetType = async (queryConditions, user, assetTypeId, listOptions) => {
+    const result = await Account.findAndCountAll({
+        where: {
+            ...queryConditions,
+            userId: user.id, // Chỉ lấy tài khoản thuộc user hiện tại
+            ...listOptions.whereCondition,
+        },
+        order: [[listOptions.sortBy, listOptions.sortOrder]],
+        // limit: listOptions.perpage,
+        // offset: listOptions.offset,
+        include: [
+            {
+                model: Category,
+                as: 'category',
+                attributes: ['id', 'name', 'icon'],
+                include: [
+                    {
+                        model: AssetType,
+                        as: 'assetType',
+                        attributes: ['id', 'name', 'icon'],
+                    }
+                ]
+            }
+        ]
+    });
+
+    // Lọc lại danh sách dựa vào assetTypeId
+    const filteredData = result.rows.filter(account =>
+        account.category?.assetType?.id === assetTypeId
+    );
+
+    // Tính tổng số kết quả sau khi lọc
+    const totalResults = filteredData.length;
+    const totalPages = Math.ceil(totalResults / listOptions.perpage);
+
+    // Cắt danh sách theo pagination
+    const paginatedData = filteredData.slice(
+        listOptions.offset,
+        listOptions.offset + listOptions.perpage
+    );
+
+    return {
+        totalResults, // Tổng số kết quả sau lọc
+        totalPages, // Tổng số trang
+        currentPage: listOptions.page,
+        perPage: listOptions.perpage,
+        data: paginatedData, // Danh sách đã cắt theo page
+    };
+};
 
 // Lấy một tài khoản theo ID
 exports.getAccountById = async (id) => {
