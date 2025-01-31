@@ -8,7 +8,7 @@ const Category = sequelize.define('Category', {
         primaryKey: true,
     },
     name: { type: DataTypes.STRING, allowNull: false },
-    icon: { type: DataTypes.STRING, defaultValue: 'default-icon' },
+    icon: { type: DataTypes.STRING, defaultValue: 'star' },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 }, {
     timestamps: true,

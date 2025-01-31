@@ -9,7 +9,7 @@ const AssetType = sequelize.define('AssetType', {
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.STRING },
     color: { type: DataTypes.STRING, defaultValue: '#000000' },
-    icon: { type: DataTypes.STRING, defaultValue: 'default-icon' },
+    icon: { type: DataTypes.STRING, defaultValue: 'star' },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 }, {
     timestamps: true,
