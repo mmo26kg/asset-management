@@ -10,6 +10,11 @@ const AssetType = sequelize.define('AssetType', {
     description: { type: DataTypes.STRING },
     color: { type: DataTypes.STRING, defaultValue: '#000000' },
     icon: { type: DataTypes.STRING, defaultValue: 'star' },
+    type: {
+        type: DataTypes.ENUM('property', 'receivable', 'payable'),
+        allowNull: false,
+        defaultValue: 'property',
+    },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 }, {
     timestamps: true,
