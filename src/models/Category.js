@@ -8,7 +8,9 @@ const Category = sequelize.define('Category', {
         primaryKey: true,
     },
     name: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.STRING },
     icon: { type: DataTypes.STRING, defaultValue: 'star' },
+    isStock: { type: DataTypes.BOOLEAN, defaultValue: false },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 }, {
     timestamps: true,
